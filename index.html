@@ -1,3 +1,17 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+  />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
 <div>
   <div id="progress0">
     <div class="goal-progress0">
@@ -7,7 +21,15 @@
     <div id="ProgressBg0">
       <div id="ProgressBar0"></div>
     </div>
-    <p class="description-bar0"></p>
+    <div class="description-container">
+      <p class="description-bar0" />
+      <div class="description-container__popover" data-toggle="popover">
+        <img
+          src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+          alt=""
+        />
+      </div>
+    </div>
   </div>
 </div>
 
@@ -79,6 +101,18 @@
     color: #08090d;
   }
 
+  .description-container {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .description-container__popover {
+    width: 16px;
+    padding-top: 5px;
+  }
+
   .description-bar0 {
     font-family: Montserrat;
     font-style: normal;
@@ -92,6 +126,17 @@
 
 <script>
   {
+    $(document).ready(function () {
+      $('[data-toggle="popover"]').attr(
+        "data-content",
+        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae nesciunt quaerat optio inventore, libero sed."
+      );
+      $('[data-toggle="popover"]').popover({
+        placement: "right",
+        trigger: "hover",
+        html: true,
+      });
+    });
     const replaceNumber = (text) => {
       const pattern = /\B(?=(\d{3})+(?!\d))/g;
       return text.toString().replace(pattern, ",");
