@@ -10,6 +10,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="svg-inject.min.js"></script>
 </head>
 
 <div>
@@ -127,10 +128,25 @@
 <script>
   {
     $(document).ready(function () {
+      $(".description-container__popover img").mouseenter(function () {
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        );
+      });
+
+      $(".description-container__popover img").mouseleave(function () {
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        );
+      });
+
       $('[data-toggle="popover"]').attr(
         "data-content",
         "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae nesciunt quaerat optio inventore, libero sed."
       );
+
       $('[data-toggle="popover"]').popover({
         placement: "right",
         trigger: "hover",
