@@ -1,0 +1,131 @@
+<div>
+  <div id="progress0">
+    <div class="goal-progress0">
+      <span class="goal-progress__current-sum0"></span>
+      <span class="goal-progress__goal-sum0"></span>
+    </div>
+    <div id="ProgressBg0">
+      <div id="ProgressBar0"></div>
+    </div>
+    <p class="description-bar0"></p>
+  </div>
+</div>
+
+<style>
+  #progress0 {
+    max-width: 477px;
+  }
+
+  #ProgressBg0 {
+    height: 8px;
+    background: rgba(137, 138, 139, 0.3);
+    border-radius: 30px;
+    position: relative;
+  }
+
+  #ProgressBg0:after {
+    content: "";
+    display: block;
+    width: 3px;
+    height: 16px;
+    border-radius: 20px;
+    background-color: #898a8b;
+    position: absolute;
+    top: -4px;
+    right: 82px;
+  }
+
+  #ProgressBar0 {
+    background: linear-gradient(180deg, #81deb5 0%, #65cea1 100%);
+    border: 0.5px solid #ffffff;
+    box-sizing: border-box;
+    border-radius: 30px;
+    height: 9px;
+    width: 1%;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    position: relative;
+  }
+
+  #ProgressBar0:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 5px;
+    background: #ffffff;
+    border-radius: 20px;
+    position: absolute;
+    top: 1px;
+    right: 16px;
+  }
+
+  .goal-progress0 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3px;
+    padding: 0 40px;
+  }
+
+  .goal-progress0 .goal-progress__current-sum0,
+  .goal-progress__goal-sum0 {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: 0.025em;
+    color: #08090d;
+  }
+
+  .description-bar0 {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #898a8b;
+    margin: 5px 0 0;
+  }
+</style>
+
+<script>
+  {
+    const replaceNumber = (text) => {
+      const pattern = /\B(?=(\d{3})+(?!\d))/g;
+      return text.toString().replace(pattern, ",");
+    };
+
+    const CURRENT_SUM = 500000;
+    const GOAL_SUM = 750000;
+    const DESCRIPTION_BAR = "RE Valuation Goal";
+    const ElCurrentSum = document.querySelector(".goal-progress__current-sum0");
+    ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
+    const ElGoalSum = document.querySelector(".goal-progress__goal-sum0");
+    ElGoalSum.textContent = "$ " + replaceNumber(GOAL_SUM);
+    const ElDescriptionBar = document.querySelector(".description-bar0");
+    ElDescriptionBar.textContent = DESCRIPTION_BAR;
+
+    let i = 0;
+    const move = () => {
+      let goalSumPercent = ((CURRENT_SUM * 83) / GOAL_SUM).toFixed();
+      if (i === 0) {
+        i = 1;
+        const progressBar = document.getElementById("ProgressBar0");
+        let width = 0;
+        if (goalSumPercent >= 100) goalSumPercent = 100;
+        const id = setInterval(() => {
+          if (width >= goalSumPercent) {
+            clearInterval(id);
+            i = 0;
+          } else {
+            width++;
+            progressBar.style.width = width + "%";
+          }
+        }, 10);
+      }
+    };
+    move();
+  }
+</script>
