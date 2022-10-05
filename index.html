@@ -1,16 +1,19 @@
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
   <link
     rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
   />
-  <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-  />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/resources/demos/style.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="svg-inject.min.js"></script>
 </head>
 
 <div>
@@ -28,6 +31,7 @@
         <img
           src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
           alt=""
+          id="tt"
         />
       </div>
     </div>
@@ -131,52 +135,95 @@
     color: #898a8b;
     margin: 5px 0 0;
   }
+
+  [role="tooltip"] {
+    border: 1px solid rgba(11, 97, 164, 1) !important;
+    box-shadow: none;
+  }
+  [role="tooltip"] .ui-tooltip-content {
+    padding: 15px 35px 15px 15px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.025em;
+
+    color: #3c3e40;
+  }
+  [role="tooltip"] .tooltip-container .close {
+    display: flex;
+    width: 16px;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    position: absolute;
+    top: 6px;
+    right: 13px;
+    text-align: center;
+    color: white;
+    border-radius: 50px;
+    background: #0b61a4;
+    border: none;
+    line-height: 16px;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  [role="tooltip"] .tooltip-container .close span {
+    position: relative;
+    left: 0.5px;
+    font-size: 20px;
+  }
 </style>
 
 <script>
   {
-    function test() {
-      console.log("testing...");
-    }
+    const id = "#tt";
+    const $elem = $(id);
 
-    $(document).ready(function () {
-      $(".description-container__popover img").mouseenter(function () {
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-        );
-      });
-
-      $(".description-container__popover img").mouseleave(function () {
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-        );
-      });
-
-      $('[data-toggle="popover"]').attr(
-        "title",
-        `<div style="display: flex; justify-content: flex-end;">
-          <button class="close" onclick={test()}>
-            X
-            </button>
-          </div>`
+    $elem.on("mouseenter", function (e) {
+      e.stopImmediatePropagation();
+      $(this).attr(
+        "src",
+        "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
       );
-
-      $('[data-toggle="popover"]').attr(
-        "data-content",
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae nesciunt quaerat optio inventore, libero sed."
-      );
-
-      $('[data-toggle="popover"]').popover({
-        placement: "bottom",
-        trigger: "hover",
-        html: true,
-      });
-      $(".close").on("click", function () {
-        console.log("works");
-      });
+      $elem.tooltip("open");
     });
+
+    $elem.tooltip({
+      items: id,
+      content: `<div class="tooltip-container">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ex expedita quos, error laudantium beatae.
+        <div class="close">
+          <span>×</span>
+        </div>
+      </div>`,
+    });
+
+    $elem.on("click", function (e) {
+      $elem.tooltip("open");
+    });
+
+    $elem.on("mouseleave", function (e) {
+      e.stopImmediatePropagation();
+      $(this).attr(
+        "src",
+        "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+      );
+    });
+
+    $(document).mouseup(function (e) {
+      const container = $(".ui-tooltip");
+      if (
+        !container.is(e.target) &&
+        container.has(e.target).length !== 0 &&
+        e.target.parentElement.className === "close"
+      ) {
+        $elem.tooltip("close");
+      }
+    });
+
     const replaceNumber = (text) => {
       const pattern = /\B(?=(\d{3})+(?!\d))/g;
       return text.toString().replace(pattern, ",");
