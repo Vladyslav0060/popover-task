@@ -109,6 +109,14 @@
     gap: 6px;
   }
 
+  .description-container .popover .arrow {
+    display: none;
+  }
+  .description-container .popover .close {
+    width: 30px;
+    height: 30px;
+    background-color: blue;
+  }
   .description-container__popover {
     width: 16px;
     padding-top: 5px;
@@ -127,6 +135,10 @@
 
 <script>
   {
+    function test() {
+      console.log("testing...");
+    }
+
     $(document).ready(function () {
       $(".description-container__popover img").mouseenter(function () {
         $(this).attr(
@@ -143,14 +155,26 @@
       });
 
       $('[data-toggle="popover"]').attr(
+        "title",
+        `<div style="display: flex; justify-content: flex-end;">
+          <button class="close" onclick={test()}>
+            X
+            </button>
+          </div>`
+      );
+
+      $('[data-toggle="popover"]').attr(
         "data-content",
         "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae nesciunt quaerat optio inventore, libero sed."
       );
 
       $('[data-toggle="popover"]').popover({
-        placement: "right",
+        placement: "bottom",
         trigger: "hover",
         html: true,
+      });
+      $(".close").on("click", function () {
+        console.log("works");
       });
     });
     const replaceNumber = (text) => {
