@@ -1,28 +1,39 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
+  />
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+</head>
 <div class="element-papa">
-  <div class="doughnut-chart1">
-    <h2 class="doughnut-chart-title">Current Annual Return Breakdown</h2>
-    <div class="canvas-wrap1">
-      <canvas id="myChart" width="326px"></canvas>
-      <p class="sum-text-center"></p>
+  <div class="doughnut-chart1mb">
+    <h2 class="doughnut-chart-titlemb">Current Annual Return Breakdown</h2>
+    <div class="canvas-wrapmb">
+      <canvas id="myChartmb" width="326px"></canvas>
+      <p class="sum-text-centermb"></p>
     </div>
-    <p class="toggle-count-value">
-      Show Current Annual Return Breakdown in
-      <span class="current-annual-type">Percents</span>
+    <div class="legend-container" id="legend-containermb"></div>
+    <p class="toggle-count-valuemb">
+      Show Current Annual Return Breakdown<br />
+      in <span class="current-annual-typemb">Percents</span>
     </p>
   </div>
 </div>
+​
 <style>
   .element-papa {
-    max-width: 477px;
-    max-height: 326px;
+    max-width: 331px;
+    max-height: 430px;
   }
-  .canvas-wrap1 {
-    margin-left: -30px;
-    padding-top: 0px;
-    position: relative;
-    width: 82%;
+  .canvas-wrapmb {
+    margin-left: -7px;
+    margin-top: 5px;
+    padding-top: -21px;
+    position: absolute;
+    width: 86%;
   }
-  .sum-text-center {
+  .sum-text-centermb {
     font-family: Montserrat;
     font-style: normal;
     font-weight: normal;
@@ -31,17 +42,16 @@
     text-align: center;
     letter-spacing: 0.025em;
     color: #555658;
-    position: absolute;
+    position: relative;
     min-width: 70px;
-    left: 76px;
-    top: 336px;
+    left: 0px;
+    top: 151px;
+    text-align: center;
   }
-  .doughnut-chart1 {
-    width: 477px;
-    height: 326px;
+  .doughnut-chart1mb {
     position: relative;
   }
-  .doughnut-chart-title {
+  .doughnut-chart-titlemb {
     font-family: Montserrat;
     font-style: normal;
     font-weight: normal;
@@ -49,9 +59,10 @@
     line-height: 27px;
     color: #555658;
     position: absolute;
-    top: 50px;
+    top: 90px;
+    text-align: center;
   }
-  .toggle-count-value {
+  .toggle-count-valuemb {
     font-family: Montserrat;
     font-style: normal;
     font-weight: 500;
@@ -59,191 +70,437 @@
     line-height: 17px;
     letter-spacing: 0.025em;
     text-decoration-line: underline;
+    text-align: center;
     color: #0b61a4;
     cursor: pointer;
-    position: absolute;
-    bottom: -85px;
+    margin-bottom: -570px;
+    margin-top: 10px;
   }
-  .doughnut-chart1 {
-    width: 100%;
-    height: 235px;
+  .doughnut-chart1mb {
+    width: 99%;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-top: -30px;
+    margin-top: -80px;
+  }
+  .legend-container {
+    margin-top: -40px;
+    min-width: 200px;
+    z-index: 10;
+  }
+  .legend-container ul {
+    flex-direction: column;
+  }
+  .legend-container ul li {
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .legend-container ul li span {
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    width: 20px;
+    border-radius: 3px;
+  }
+  .legend-container ul li p {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    color: #3c3e40;
+    margin-bottom: 10px;
+  }
+
+  [role="tooltip"] {
+    border: 1px solid rgba(11, 97, 164, 1) !important;
+    box-shadow: none;
+    border-radius: 5px;
+    max-width: 400px;
+  }
+
+  [role="tooltip"] .ui-tooltip-content {
+    padding: 15px 35px 15px 15px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.025em;
+
+    color: #3c3e40;
+  }
+  [role="tooltip"] .tooltip-container .close {
+    display: flex;
+    width: 16px;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    position: absolute;
+    top: 6px;
+    right: 13px;
+    text-align: center;
+    color: white;
+    border-radius: 50px;
+    background: #0b61a4;
+    border: none;
+    line-height: 16px;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  [role="tooltip"] .tooltip-container .close span {
+    position: relative;
+    left: 0.5px;
+    font-size: 20px;
+  }
+
+  img.tooltip {
+    width: 16px;
+    height: 16px;
+    padding: 0 5px 0 5px;
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="text/javascript">
-  {
-    (function createChartDoughnut(id) {
-      const appreciation = 5000;
-      const debtPaydown = 6000;
-      const cashflow = 7000;
-      const depreciation = 3000;
-      const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
-      let isCountPercent = false;
-      const TOTAL_COUNT = (
-        appreciation +
-        debtPaydown +
-        cashflow +
-        depreciation
-      ).toFixed(0);
-      const replaceNumber = (text) => {
-        const pattern = /\B(?=(\d{3})+(?!\d))/g;
-        return text.toString().replace(pattern, ",");
-      };
-      const dataPars = (dataCount) => {
-        const dataPercent = [];
-        dataCount.map((item) => {
-          dataPercent.push(Number(((item * 100) / 120000).toFixed(1)));
+
+<script>
+  function initTooltips() {
+    const id1 = "#tt1";
+    const $elem1 = $(id1);
+    const id2 = "#tt2";
+    const $elem2 = $(id2);
+    const id3 = "#tt3";
+    const $elem3 = $(id3);
+    const id4 = "#tt4";
+    const $elem4 = $(id4);
+
+    const elems = [
+      {
+        elem: $elem1,
+        id: id1,
+        content: `This is content of the tootlip ${id1}.`,
+      },
+      {
+        elem: $elem2,
+        id: id2,
+        content: `This is content of the tootlip ${id2}.`,
+      },
+      {
+        elem: $elem3,
+        id: id3,
+        content: `This is content of the tootlip ${id3}.`,
+      },
+      {
+        elem: $elem4,
+        id: id4,
+        content: `This is content of the tootlip ${id4}.`,
+      },
+    ];
+
+    function closeIfOpened(id) {
+      const rest = elems.filter((item) => item.elem[0].id !== id);
+      rest.forEach((item) => item.elem.tooltip("close"));
+    }
+
+    elems.forEach((item) => {
+      item.elem.on("mouseenter", function (e) {
+        e.stopImmediatePropagation();
+        elems.forEach((item) => {
+          item.elem.tooltip("close");
         });
-        return dataPercent;
-      };
-      const reducer = (accumulator, currentValue) => accumulator + currentValue;
-      const SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed();
-      const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
-      const BOT_RANGE = 50;
-      const DISPERSION = 30;
-      const maxVal = sortedPercent[0];
-      const thicknessData = sortedPercent.map((item) => {
-        let value;
-        if (item === maxVal) {
-          value = DISPERSION;
-        } else {
-          value = (item * DISPERSION) / maxVal;
-        }
-        return [BOT_RANGE, BOT_RANGE + value];
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        );
+        closeIfOpened(item.elem[0].id);
+        item.elem.tooltip("open");
       });
-      // Plugins
-      const thickness = {
-        id: "thickness",
-        beforeDraw: (chart, options) => {
-          let thickness = chart.options.plugins.thickness.thickness;
 
-          chart.getDatasetMeta(0).data[0].innerRadius = 47.21;
-          chart.getDatasetMeta(0).data[0].outerRadius = 82.83;
-          chart.getDatasetMeta(0).data[1].innerRadius = 47.21;
-          chart.getDatasetMeta(0).data[1].outerRadius = 77.59;
-          chart.getDatasetMeta(0).data[2].innerRadius = 47.21;
-          chart.getDatasetMeta(0).data[2].outerRadius = 72.59;
-          chart.getDatasetMeta(0).data[3].innerRadius = 47.21;
-          chart.getDatasetMeta(0).data[3].outerRadius = 66.1;
-        },
-      };
-      const shadowPlugin = {
-        beforeDraw: (chart, args, options) => {
-          const { ctx } = chart;
-          console.log(chart);
-          ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
-          ctx.shadowBlur = 10;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = -5;
-        },
-      };
-      const CHART_COLORS = {
-        blue: "#66A3D2",
-        yellow: "#FFC373",
-        purple: "#7272D5",
-        green: "#7FDBB3",
-      };
+      item.elem.tooltip({
+        items: item.id,
+        content: `
+      <div class="tooltip-container">
+        ${item.content}
+        <div class="close">
+          <span>×</span>
+        </div>
+      </div>`,
+      });
 
-      const CHART_TITLE = [
-        "Appreciation",
-        "Debt Paydown",
-        "Cash Flow",
-        "Depreciation",
-      ];
+      item.elem.on("click", function (e) {
+        item.elem.tooltip("open");
+      });
 
-      const createLabelTitle = () => {
-        const titleArr = [];
-        if (isCountPercent) {
-          dataPars(DATA_COUNT).map((item, index) => {
-            titleArr.push(`${CHART_TITLE[index]} ${item} %    `);
-          });
-        } else {
-          DATA_COUNT.map((item, index) => {
-            titleArr.push(`${CHART_TITLE[index]} $ ${replaceNumber(item)}`);
-          });
+      item.elem.on("mouseleave", function (e) {
+        e.stopImmediatePropagation();
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        );
+      });
+
+      $(document).mouseup(function (e) {
+        const container = $(".ui-tooltip");
+        if (
+          !container.is(e.target) &&
+          container.has(e.target).length !== 0 &&
+          e.target.parentElement.className === "close"
+        ) {
+          item.elem.tooltip("close");
         }
-        return titleArr;
-      };
-      const data = {
-        labels: createLabelTitle(),
-        datasets: [
-          {
-            data: dataPars(DATA_COUNT),
-            backgroundColor: Object.values(CHART_COLORS),
-          },
-        ],
-      };
-      const config = {
-        type: "doughnut",
-        data: data,
-        plugins: [thickness],
-        options: {
-          layout: {
-            padding: {
-              left: 0,
-              right: 0,
-            },
-          },
-          aspectRatio: 1,
-          rotation: -20,
-          borderRadius: 5,
-          borderWidth: 0,
-          responsive: true,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  return " " + context.label;
-                },
-              },
-            },
-            legend: {
-              onClick() {},
-              position: "right",
-              align: "center",
-              maxWidth: 158,
-              labels: {
-                boxWidth: 15,
-                boxHeight: 15,
-              },
-            },
-            thickness: {
-              thickness: thicknessData,
-            },
+      });
+    });
+    return elems;
+  }
+</script>
+
+<script type="text/javascript">
+  let savedTooltips = [];
+  (function createChartDoughnut(id) {
+    const appreciation = 7000;
+    const debtPaydown = 8000;
+    const cashflow = 9000;
+    const depreciation = 5000;
+    const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
+    let isCountPercent = false;
+    const TOTAL_COUNT = (
+      appreciation +
+      debtPaydown +
+      cashflow +
+      depreciation
+    ).toFixed();
+    const replaceNumber = (text) => {
+      const pattern = /\B(?=(\d{3})+(?!\d))/g;
+      return text.toString().replace(pattern, ",");
+    };
+    const dataPars = (dataCount) => {
+      const dataPercent = [];
+      dataCount.map((item) => {
+        dataPercent.push(Number(((item * 100) / 300000).toFixed(1)));
+      });
+      return dataPercent;
+    };
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    const SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed();
+    const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
+    const BOT_RANGE = 50;
+    const DISPERSION = 30;
+    const maxVal = sortedPercent[0];
+    const thicknessData = sortedPercent.map((item) => {
+      let value;
+      if (item === maxVal) {
+        value = DISPERSION;
+      } else {
+        value = (item * DISPERSION) / maxVal;
+      }
+      return [BOT_RANGE, BOT_RANGE + value];
+    });
+    // Plugins
+    const getLegendList = (chart, id) => {
+      let legendContainer = document.getElementById(id);
+      let listContainer = legendContainer.querySelector("ul");
+      if (!listContainer) {
+        listContainer = document.createElement("ul");
+        listContainer.style.display = "flex";
+        listContainer.style.margin = 0;
+        listContainer.style.padding = 0;
+        legendContainer.appendChild(listContainer);
+      }
+      return listContainer;
+    };
+    const htmlLegendPlugin = {
+      id: "htmlLegend",
+      afterUpdate(chart, args, options) {
+        const ul = getLegendList(chart, options.containerID);
+        // Remove old legend items
+        while (ul.firstChild) {
+          ul.firstChild.remove();
+        }
+        // Reuse the built-in legendItems generator
+        const items = chart.options.plugins.legend.labels.generateLabels(chart);
+        items.forEach((item, index = 0) => {
+          const toopTip = document.createElement("img");
+          toopTip.className = "tooltip";
+          toopTip.src =
+            "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg";
+          toopTip.alt = "";
+          toopTip.id = `tt${index + 1}`;
+          const li = document.createElement("li");
+          li.onclick = () => {};
+          // Color box
+          const boxSpan = document.createElement("span");
+          boxSpan.style.background = item.fillStyle;
+          boxSpan.style.borderColor = item.strokeStyle;
+          boxSpan.style.borderWidth = item.lineWidth + "px";
+          // Text
+          const textContainer = document.createElement("p");
+          textContainer.style.color = item.fontColor;
+          textContainer.style.margin = 0;
+          textContainer.style.padding = 0;
+          textContainer.style.textDecoration = item.hidden
+            ? "line-through"
+            : "";
+          const text = document.createTextNode(item.text);
+          textContainer.appendChild(text);
+
+          const valueContainer = document.createElement("p");
+          valueContainer.style.color = item.fontColor;
+          valueContainer.style.margin = 0;
+          valueContainer.style.padding = 0;
+          valueContainer.style.textDecoration = item.hidden
+            ? "line-through"
+            : "";
+          const value = document.createTextNode(
+            isCountPercent
+              ? `${dataPars(DATA_COUNT)[index]} %`
+              : `$ ${replaceNumber(DATA_COUNT[index])}`
+          );
+          valueContainer.appendChild(value);
+          li.appendChild(boxSpan);
+          li.appendChild(textContainer);
+          li.appendChild(toopTip);
+          li.appendChild(valueContainer);
+          ul.appendChild(li);
+        });
+      },
+    };
+    const thickness = {
+      id: "thickness",
+      beforeDraw: (chart, options) => {
+        let thickness = chart.options.plugins.thickness.thickness;
+        chart.getDatasetMeta(0).data[0].innerRadius = 47.21;
+        chart.getDatasetMeta(0).data[0].outerRadius = 82.83;
+        chart.getDatasetMeta(0).data[1].innerRadius = 47.21;
+        chart.getDatasetMeta(0).data[1].outerRadius = 77.59;
+        chart.getDatasetMeta(0).data[2].innerRadius = 47.21;
+        chart.getDatasetMeta(0).data[2].outerRadius = 72.59;
+        chart.getDatasetMeta(0).data[3].innerRadius = 47.21;
+        chart.getDatasetMeta(0).data[3].outerRadius = 66.1;
+      },
+    };
+    const shadowPlugin = {
+      beforeDraw: (chart, args, options) => {
+        const { ctx } = chart;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = -5;
+      },
+    };
+    const CHART_COLORS = {
+      blue: "#66A3D2",
+      yellow: "#FFC373",
+      purple: "#7272D5",
+      green: "#7FDBB3",
+    };
+    const CHART_TITLE = [
+      "Appreciation",
+      "Debt Paydown",
+      "Cash Flow",
+      "Depreciation",
+    ];
+    const createLabelTitle = () => {
+      const titleArr = [];
+      if (isCountPercent) {
+        dataPars(DATA_COUNT).map((item, index) => {
+          titleArr.push(`${CHART_TITLE[index]}`);
+        });
+      } else {
+        DATA_COUNT.map((item, index) => {
+          titleArr.push(`${CHART_TITLE[index]}`);
+        });
+      }
+      return titleArr;
+    };
+    const data = {
+      labels: createLabelTitle(),
+      datasets: [
+        {
+          data: dataPars(DATA_COUNT),
+          backgroundColor: Object.values(CHART_COLORS),
+        },
+      ],
+    };
+    const config = {
+      type: "doughnut",
+      data: data,
+      plugins: [thickness, htmlLegendPlugin],
+      options: {
+        layout: {
+          padding: {
+            left: 0,
+            right: 0,
           },
         },
-      };
-      const canvasWrap = document.querySelector(".canvas-wrap1");
-      const chart = document.createElement("canvas");
-      canvasWrap.appendChild(chart);
-      const chartId = `myChart${id}`;
-      chart.id = chartId;
-      const ctx = document.getElementById(chartId);
-      const myChart = new Chart(ctx, config);
-      const sumTextCenter = document.querySelector(".sum-text-center");
+        aspectRatio: 1,
+        rotation: -20,
+        borderRadius: 5,
+        borderWidth: 0,
+        responsive: true,
+        plugins: {
+          htmlLegend: {
+            containerID: "legend-containermb",
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return " " + context.label;
+              },
+            },
+          },
+          legend: {
+            onClick() {},
+            display: false,
+            position: "bottom",
+            align: "start",
+            maxWidth: 150,
+            labels: {
+              boxWidth: 15,
+              boxHeight: 15,
+            },
+          },
+          thickness: {
+            thickness: thicknessData,
+          },
+        },
+      },
+    };
+    const canvasWrap = document.querySelector(".canvas-wrapmb");
+    const chart = document.createElement("canvas");
+    canvasWrap.appendChild(chart);
+    const chartId = `myChartmb${id}`;
+    chart.id = chartId;
+    const ctx = document.getElementById(chartId);
+    const myChartmb = new Chart(ctx, config);
+    const sumTextCenter = document.querySelector(".sum-text-centermb");
+    sumTextCenter.innerText = `${
+      isCountPercent
+        ? SUM_COUNT_PERCENT + " %"
+        : "$" + replaceNumber(TOTAL_COUNT)
+    }`;
+
+    const elAnualType = document.querySelector(".current-annual-typemb");
+    const toggleCountType = document.querySelector(".toggle-count-valuemb");
+    toggleCountType.addEventListener("click", () => {
+      isCountPercent = !isCountPercent;
+      myChartmb.data.labels = createLabelTitle();
+      savedTooltips.forEach((item) => item.elem.tooltip("close"));
+      myChartmb.update();
+      savedTooltips = initTooltips();
       sumTextCenter.innerText = `${
         isCountPercent
           ? SUM_COUNT_PERCENT + " %"
           : "$" + replaceNumber(TOTAL_COUNT)
       }`;
-      const elAnualType = document.querySelector(".current-annual-type");
-      const toggleCountType = document.querySelector(".toggle-count-value");
-      toggleCountType.addEventListener("click", () => {
-        isCountPercent = !isCountPercent;
-        myChart.data.labels = createLabelTitle();
-        myChart.update();
-        sumTextCenter.innerText = `${
-          isCountPercent
-            ? SUM_COUNT_PERCENT + " %"
-            : "$" + replaceNumber(TOTAL_COUNT)
-        }`;
-        elAnualType.innerText = isCountPercent ? "Dollars" : "Percents";
-      });
-    })();
-  }
+      elAnualType.innerText = isCountPercent ? "Dollars" : "Percents";
+    });
+  })();
+  savedTooltips = initTooltips();
+  savedTooltips?.forEach((item) => item.elem.tooltip("close"));
 </script>
