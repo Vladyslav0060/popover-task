@@ -1,507 +1,811 @@
-<head>
-  <link
-    rel="stylesheet"
-    href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
-  />
-  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-</head>
-<div class="element-papa">
-  <div class="doughnut-chart1mb">
-    <h2 class="doughnut-chart-titlemb">Current Annual Return Breakdown</h2>
-    <div class="canvas-wrapmb">
-      <canvas id="myChartmb" width="326px"></canvas>
-      <p class="sum-text-centermb"></p>
+<body>
+  <div class="content_l2">
+    <div class="controls">
+      <div class="chart-data-btn active" data-chart-index="0" data-chart-name="accumulated">
+        <p id="control-title-accumulated" class="chart-data-btn__title">$ 406,865</p>
+        <p class="chart-data-btn__desc">Projected <br>Accumulated Wealth</p>
+      </div>
+      <div class="chart-data-btn" data-chart-index="1" data-chart-name="cash-flow">
+        <p id="control-title-cash-flow" class="chart-data-btn__title">$ 406,865</p>
+        <p class="chart-data-btn__desc">Projected
+          Cash Flow</p>
+      </div>
+      <div class="chart-data-btn" data-chart-index="2" data-chart-name="">
+        <p id="control-title-projected-equity" class="chart-data-btn__title">$ 406,865</p>
+        <p class="chart-data-btn__desc">Projected Equity</p>
+      </div>
     </div>
-    <div class="legend-container" id="legend-containermb"></div>
-    <p class="toggle-count-valuemb">
-      Show Current Annual Return Breakdown<br />
-      in <span class="current-annual-typemb">Percents</span>
-    </p>
+    <div>
+      <h2 class="title_l12">Projected Property Value</h2>
+      <h3 class="sub-title_l12">30 Year Projection</h3>
+      <ul class="list-points"></ul>
+      <div class="chart-wrap_l12">
+        <canvas id="myChartL12"></canvas>
+        <div class="legend"></div>
+      </div>
+    </div>
   </div>
-</div>
-​
-<style>
-  .element-papa {
-    max-width: 331px;
-    max-height: 430px;
-  }
-  .canvas-wrapmb {
-    margin-left: -7px;
-    margin-top: 5px;
-    padding-top: -21px;
-    position: absolute;
-    width: 86%;
-  }
-  .sum-text-centermb {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 22px;
-    text-align: center;
-    letter-spacing: 0.025em;
-    color: #555658;
-    position: relative;
-    min-width: 70px;
-    left: 0px;
-    top: 151px;
-    text-align: center;
-  }
-  .doughnut-chart1mb {
-    position: relative;
-  }
-  .doughnut-chart-titlemb {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 22px;
-    line-height: 27px;
-    color: #555658;
-    position: absolute;
-    top: 90px;
-    text-align: center;
-  }
-  .toggle-count-valuemb {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 17px;
-    letter-spacing: 0.025em;
-    text-decoration-line: underline;
-    text-align: center;
-    color: #0b61a4;
-    cursor: pointer;
-    margin-bottom: -570px;
-    margin-top: 10px;
-  }
-  .doughnut-chart1mb {
-    width: 99%;
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    margin-top: -80px;
-  }
-  .legend-container {
-    margin-top: -40px;
-    min-width: 200px;
-    z-index: 10;
-  }
-  .legend-container ul {
-    flex-direction: column;
-  }
-  .legend-container ul li {
-    display: flex;
-    flex-direction: row;
-    margin-left: 10px;
-    margin-bottom: 10px;
-    align-items: center;
-    cursor: pointer;
-  }
-  .legend-container ul li span {
-    display: inline-block;
-    height: 20px;
-    margin-right: 10px;
-    width: 20px;
-    border-radius: 3px;
-  }
-  .legend-container ul li p {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 15px;
-    color: #3c3e40;
-    margin-bottom: 10px;
-  }
-
-  [role="tooltip"] {
-    border: 1px solid rgba(11, 97, 164, 1) !important;
-    box-shadow: none;
-    border-radius: 5px;
-    max-width: 400px;
-  }
-
-  [role="tooltip"] .ui-tooltip-content {
-    padding: 15px 35px 15px 15px;
-    font-family: "Montserrat", sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 15px;
-    letter-spacing: 0.025em;
-
-    color: #3c3e40;
-  }
-  [role="tooltip"] .tooltip-container .close {
-    display: flex;
-    width: 16px;
-    align-items: center;
-    justify-content: center;
-    height: 16px;
-    position: absolute;
-    top: 6px;
-    right: 13px;
-    text-align: center;
-    color: white;
-    border-radius: 50px;
-    background: #0b61a4;
-    border: none;
-    line-height: 16px;
-    font-size: 10px;
-    cursor: pointer;
-  }
-
-  [role="tooltip"] .tooltip-container .close span {
-    position: relative;
-    left: 0.5px;
-    font-size: 20px;
-  }
-
-  img.tooltip {
-    width: 16px;
-    height: 16px;
-    padding: 0 5px 0 5px;
-  }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-  function initTooltips() {
-    const id1 = "#tt1";
-    const $elem1 = $(id1);
-    const id2 = "#tt2";
-    const $elem2 = $(id2);
-    const id3 = "#tt3";
-    const $elem3 = $(id3);
-    const id4 = "#tt4";
-    const $elem4 = $(id4);
-
-    const elems = [
-      {
-        elem: $elem1,
-        id: id1,
-        content: `This is content of the tootlip ${id1}.`,
-      },
-      {
-        elem: $elem2,
-        id: id2,
-        content: `This is content of the tootlip ${id2}.`,
-      },
-      {
-        elem: $elem3,
-        id: id3,
-        content: `This is content of the tootlip ${id3}.`,
-      },
-      {
-        elem: $elem4,
-        id: id4,
-        content: `This is content of the tootlip ${id4}.`,
-      },
-    ];
-
-    function closeIfOpened(id) {
-      const rest = elems.filter((item) => item.elem[0].id !== id);
-      rest.forEach((item) => item.elem.tooltip("close"));
+  </body>
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+  </script>
+  <style>
+      .tooltip-cash-flow-content {
+          width: 70px;
+          min-height: 130px;
+          background-color: yellowgreen;
+          border-radius: 2px;
+          z-index: 9999999;
+          position: absolute;
+          top: -50px;
+          left: 15px;
+      }
+  
+      .tooltip-cash-flow-content .tooltip-cash-flow-content__text {
+          text-align: center;
+          padding: 5px;
+          min-height: 30px;
+  
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 10px;
+          line-height: 13px;
+          color: #FFFFFF;
+      }
+  
+      .tooltip-cash-flow-content .tooltip-cash-flow-content__text p {
+          font-size: 12px;
+          margin-bottom: 5px;
+      }
+  
+      .tooltip-cash-flow-content__text_top {
+          background-color: #7FDBB3;
+      }
+  
+      .tooltip-cash-flow-content__text_middle {
+          background-color: #65A2CF;
+      }
+  
+      .tooltip-cash-flow-content__text_bottom {
+          background-color: #F6BD16;
+      }
+  
+      .content_l2 {
+          display: flex;
+          justify-content: center;
+      }
+  
+      #myChartL12 {
+          max-width: 778px;
+          max-height: 300px;
+          max-height: 250px;
+      }
+  
+      .chart-wrap_l12 {
+          min-width: 778px;
+      }
+  
+      .legend {
+          display: flex;
+          margin-top: -10px;
+          margin-left: -3px;
+          width: 92%;
+      }
+  
+      .legend .legend__label {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 27px;
+          background-color: #94A0AC;
+          border: 1px solid #fff;
+          cursor: pointer;
+          z-index: 100000;
+  
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 11px;
+          line-height: 13px;
+          color: #FFFFFF;
+      }
+  
+      .legend__label.active {
+          background-color: #FF5C5C;
+      }
+  
+      .title_l12 {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 22px;
+          line-height: 27px;
+          color: #555658;
+          text-align: center;
+          margin: 0 0 10px 0;
+      }
+  
+      .sub-title_l12 {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 16px;
+          line-height: 20px;
+          color: #555658;
+          text-align: center;
+          margin: 0 0 10px 0;
+      }
+  
+      .sub-title_l12.hidden {
+          display: none;
+      }
+  
+      .list-points {
+          display: none;
+          justify-content: center;
+          list-style: none;
+          padding: 0;
+          margin: 0 0 10px 0;
+      }
+  
+      .list-points li {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0.025em;
+          color: #08090D;
+          margin-right: 54px;
+      }
+  
+      .list-points li:last-child {
+          margin-right: 0;
+      }
+  
+      .controls {
+          width: 190px;
+          height: 331px;
+          box-sizing: border-box;
+          padding-right: 15px;
+      }
+  
+      .controls .chart-data-btn {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 0 4px;
+          position: relative;
+          border-top: 1px solid #0B61A4;
+          border-right: 1px solid #0B61A4;
+          border-left: 1px solid #0B61A4;
+          height: 111px;
+          cursor: pointer;
+      }
+  
+      .controls .chart-data-btn.active {
+          background-color: #0B61A4;
+      }
+  
+      .controls .chart-data-btn.active:after {
+          background-color: #0B61A4;
+          content: '';
+          display: block;
+          width: 0;
+          height: 0;
+          border-top: 8px solid transparent;
+          border-right: 10px solid #FFFFFF;
+          border-bottom: 8px solid transparent;
+          position: absolute;
+          right: -2px;
+          top: 50px;
+      }
+  
+      .controls .chart-data-btn.active .chart-data-btn__title,
+      .controls .chart-data-btn.active .chart-data-btn__desc {
+          color: #FFFFFF;
+      }
+  
+      .controls .chart-data-btn:last-child {
+          border-bottom: 1px solid #0B61A4;
+      }
+  
+      .controls .chart-data-btn:after {
+          content: '';
+          display: none;
+          width: 0;
+          height: 0;
+          border-top: 8px solid transparent;
+          border-right: 10px solid #FFFFFF;
+          border-bottom: 8px solid transparent;
+          position: absolute;
+          right: -1px;
+          top: 50px;
+      }
+  
+      .controls .chart-data-btn:hover {
+          background-color: #0B61A4;
+          border-bottom: 1px solid #0B61A4;
+      }
+  
+      /*.controls .chart-data-btn:hover:after {*/
+      /*    display: block;*/
+      /*}*/
+  
+      .controls .chart-data-btn:hover .chart-data-btn__title,
+      .controls .chart-data-btn:hover .chart-data-btn__desc {
+          color: #FFFFFF;
+      }
+  
+      .chart-data-btn__title {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 24px;
+          line-height: 29px;
+          letter-spacing: 0.025em;
+          text-align: center;
+          color: #0B61A4;
+          margin: 0 0 5px 0;
+      }
+  
+      .chart-data-btn__desc {
+          font-family: Montserrat;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 20px;
+          letter-spacing: 0.025em;
+          text-align: center;
+          color: #0B61A4;
+          margin: 0;
+      }
+  </style>
+  
+  <script>{
+    let customTooltip = (context) => {
+      let tooltipEl = document.getElementById('custom-tooltip-cash-flow');
+      // Create element on first render
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'custom-tooltip-cash-flow';
+        tooltipEl.innerHTML = '<div class="tooltip-cash-flow-content"></div>'
+        document.body.appendChild(tooltipEl);
+      }
+      // Hide if no tooltip
+      let tooltipModel = context.tooltip;
+      if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = 0;
+        return;
+      }
+  
+      // Set caret Position
+      tooltipEl.classList.remove('above', 'below', 'no-transform');
+      if (tooltipModel.yAlign) {
+        tooltipEl.classList.add(tooltipModel.yAlign);
+      } else {
+        tooltipEl.classList.add('no-transform');
+      }
+  
+      // Set Text
+      if (tooltipModel.body) {
+        tooltipEl.insertAdjacentHTML('beforeend',
+          `<div class="tooltip-cash-flow-content">
+                  <div class="tooltip-cash-flow-content__text tooltip-cash-flow-content__text_top"> <p>INCOME</p> ${income[context.tooltip.title[0] - 1]} </div>
+                  <div class="tooltip-cash-flow-content__text tooltip-cash-flow-content__text_middle"><p>CASH FLOW</p> ${cashFlow[context.tooltip.title[0] - 1]} </div>
+                  <div class="tooltip-cash-flow-content__text tooltip-cash-flow-content__text_bottom"><p>EXPENSES</p> ${expenses[context.tooltip.title[0] - 1]} </div>
+                </div>`)
+      }
+  
+      let position = context.chart.canvas.getBoundingClientRect();
+      let bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
+  
+      // Display, position, and set styles for font
+      tooltipEl.style.opacity = 1;
+      tooltipEl.style.position = 'absolute';
+      tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+      tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+      tooltipEl.style.font = bodyFont.string;
+      tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
+      tooltipEl.style.pointerEvents = 'none';
     }
-
-    elems.forEach((item) => {
-      item.elem.on("mouseenter", function (e) {
-        e.stopImmediatePropagation();
-        elems.forEach((item) => {
-          item.elem.tooltip("close");
-        });
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-        );
-        closeIfOpened(item.elem[0].id);
-        item.elem.tooltip("open");
-      });
-
-      item.elem.tooltip({
-        items: item.id,
-        position: { my: "left-45% top", at: "left bottom+10" },
-        content: `
-      <div class="tooltip-container">
-        ${item.content}
-        <div class="close">
-          <span>×</span>
-        </div>
-      </div>`,
-      });
-
-      item.elem.on("click", function (e) {
-        item.elem.tooltip("open");
-      });
-
-      item.elem.on("mouseleave", function (e) {
-        e.stopImmediatePropagation();
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-        );
-      });
-
-      $(document).mouseup(function (e) {
-        const container = $(".ui-tooltip");
-        if (
-          !container.is(e.target) &&
-          container.has(e.target).length !== 0 &&
-          e.target.parentElement.className === "close"
-        ) {
-          item.elem.tooltip("close");
+  
+  
+    const parsValue = (value) => {
+      const pattern = (/\B(?=(\d{3})+(?!\d))/g);
+      return '$ ' + value.toFixed().toString().replace(pattern, ",");
+    }
+  
+    const COUNT_YEARS = 30;
+    const cashFlow =[2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224, 14955, 15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322, 29698, 31342, 31403, 35652, 37436, 38715, 44582, 44859, 47948, 48235, 49069];
+    const appreciation = [4332, 9179, 14838, 16193, 16248, 16998, 19873, 20290, 20400, 22003, 23726, 24302, 24953, 25802, 29483, 29783, 30716, 34271, 36627, 36878, 37159, 38404, 39329, 42952, 43661, 45302, 47902, 48230, 49125, 49348];
+    const debtPaydown = [2414, 3640, 3935, 4069, 4509, 5567, 11163, 11715, 12076, 12485, 14203, 14804, 15543, 17107, 18938, 19572, 19828, 20650, 20817, 21454, 22282, 26320, 26457, 27371, 33638, 34753, 35842, 36453, 41329, 44746];
+     console.log('debtPaydown', debtPaydown);
+    const reducerData = (date) => {
+      const arr = [];
+      date.reduce((previousValue, currentValue) => {
+        arr.push(previousValue);
+        return previousValue + currentValue;
+      }, date[0]);
+      return arr;
+    }
+     console.log('reducerData', reducerData(debtPaydown));
+  
+    const loanBalance = [3880, 5239, 5246, 6387, 6640, 8037, 8139, 11030, 12107, 13777, 14587, 15636, 18400, 19772, 19850, 22944, 27804, 28769, 29879, 31666, 35439, 35943, 36660, 37604, 39967, 41683, 42198, 42281, 43505, 46583];
+    const expenses = [2351, 3304, 4858, 5111, 5138, 5531, 5555, 6868, 7739, 8182, 8696, 10753, 16327, 17543, 18350, 18384, 22554, 22847, 24699, 26909, 28183, 33052, 35308, 35367, 35702, 39026, 46619, 48330, 48782, 49572];
+    const income = [1230, 1967, 3898, 5670, 9787, 10851, 13474, 15990, 16561, 21797, 24080, 27491, 31551, 31710, 31990, 32363, 33838, 34095, 34355, 34509, 35271, 38404, 38746, 41603, 43092, 45377, 45965, 47314, 48594, 49174];
+  
+    const elSubTitle = document.querySelector('.sub-title_l12');
+    const elAccumulatedTitle = document.querySelector('#control-title-accumulated');
+    const elCashFlowTitle = document.querySelector('#control-title-cash-flow');
+    const elProjectedEquityTitle = document.querySelector('#control-title-projected-equity');
+  
+    const labels = () => {
+      let arr = []
+      for (let i = 1; i <= COUNT_YEARS; i++) {
+        arr.push(i);
+      }
+      return arr
+    }
+  
+    const currentDataChart = (data) => {
+      const chartDates = {
+        cashFlow,
+        appreciation,
+        debtPaydown: reducerData(debtPaydown),
+        loanBalance,
+      };
+      if (typeof data !== 'string') {
+        throw new Error('arg not a sting');
+      }
+      return chartDates[data];
+    }
+  
+    const appreciationDataChart = {
+      labels: labels(),
+      datasets: [{
+        pointRadius: 0,
+        label: 'Cash Flow',
+        data: currentDataChart('cashFlow'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#F6BD16',
+        tension: 1,
+        fill: true,
+      }, {
+        pointRadius: 0,
+        label: 'Appreciation',
+        data: currentDataChart('appreciation'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#65A2CF',
+        tension: 1,
+        fill: true
+      }, {
+        pointRadius: 0,
+        label: 'Debt Paydown',
+        data: currentDataChart('debtPaydown'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#7FDBB3',
+        tension: 1,
+        fill: true
+      }]
+    };
+    const cashFlowDataChart = {
+      labels: labels(),
+      datasets: [{
+        label: 'Cash Flow',
+        data: cashFlow,
+        backgroundColor: 'rgba(127, 219, 179, 1)',
+      }]
+    };
+    const appreciationDataLoanBalance = {
+      labels: labels(),
+      datasets: [{
+        pointRadius: 0,
+        label: 'Principal',
+        data: currentDataChart('loanBalance'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#7373D8',
+        tension: 1,
+        fill: true
+      }, {
+        pointRadius: 0,
+        label: 'Debt Paydown',
+        data: currentDataChart('cashFlow'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#F6BD16',
+        tension: 1,
+        fill: true
+      }, {
+        pointRadius: 0,
+        label: 'Appreciation',
+        data: currentDataChart('appreciation'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#65A2CF',
+        tension: 1,
+        fill: true
+      }]
+    };
+  
+    //plugins
+    //myEventCatcher
+    const myEventCatcher = {
+      id: "myEventCatcher",
+      beforeEvent(chart, args, pluginOptions) {
+        const event = args.event;
+        if (event.type === "mouseout") {
+          setDefaultValueInHtml()
         }
-      });
-    });
-    return elems;
-  }
-</script>
-
-<script type="text/javascript">
-  let savedTooltips = [];
-  (function createChartDoughnut(id) {
-    const appreciation = 7000;
-    const debtPaydown = 8000;
-    const cashflow = 9000;
-    const depreciation = 5000;
-    const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
-    let isCountPercent = false;
-    const TOTAL_COUNT = (
-      appreciation +
-      debtPaydown +
-      cashflow +
-      depreciation
-    ).toFixed();
-    const replaceNumber = (text) => {
-      const pattern = /\B(?=(\d{3})+(?!\d))/g;
-      return text.toString().replace(pattern, ",");
-    };
-    const dataPars = (dataCount) => {
-      const dataPercent = [];
-      dataCount.map((item) => {
-        dataPercent.push(Number(((item * 100) / 300000).toFixed(1)));
-      });
-      return dataPercent;
-    };
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    const SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed();
-    const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
-    const BOT_RANGE = 50;
-    const DISPERSION = 30;
-    const maxVal = sortedPercent[0];
-    const thicknessData = sortedPercent.map((item) => {
-      let value;
-      if (item === maxVal) {
-        value = DISPERSION;
-      } else {
-        value = (item * DISPERSION) / maxVal;
       }
-      return [BOT_RANGE, BOT_RANGE + value];
-    });
-    // Plugins
-    const getLegendList = (chart, id) => {
-      let legendContainer = document.getElementById(id);
-      let listContainer = legendContainer.querySelector("ul");
-      if (!listContainer) {
-        listContainer = document.createElement("ul");
-        listContainer.style.display = "flex";
-        listContainer.style.margin = 0;
-        listContainer.style.padding = 0;
-        legendContainer.appendChild(listContainer);
-      }
-      return listContainer;
-    };
-    const htmlLegendPlugin = {
-      id: "htmlLegend",
-      afterUpdate(chart, args, options) {
-        const ul = getLegendList(chart, options.containerID);
-        // Remove old legend items
-        while (ul.firstChild) {
-          ul.firstChild.remove();
-        }
-        // Reuse the built-in legendItems generator
-        const items = chart.options.plugins.legend.labels.generateLabels(chart);
-        items.forEach((item, index = 0) => {
-          const toopTip = document.createElement("img");
-          toopTip.className = "tooltip";
-          toopTip.src =
-            "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg";
-          toopTip.alt = "";
-          toopTip.id = `tt${index + 1}`;
-          const li = document.createElement("li");
-          li.onclick = () => {};
-          // Color box
-          const boxSpan = document.createElement("span");
-          boxSpan.style.background = item.fillStyle;
-          boxSpan.style.borderColor = item.strokeStyle;
-          boxSpan.style.borderWidth = item.lineWidth + "px";
-          // Text
-          const textContainer = document.createElement("p");
-          textContainer.style.color = item.fontColor;
-          textContainer.style.margin = 0;
-          textContainer.style.padding = 0;
-          textContainer.style.textDecoration = item.hidden
-            ? "line-through"
-            : "";
-          const text = document.createTextNode(item.text);
-          textContainer.appendChild(text);
-
-          const valueContainer = document.createElement("p");
-          valueContainer.style.color = item.fontColor;
-          valueContainer.style.margin = 0;
-          valueContainer.style.padding = 0;
-          valueContainer.style.textDecoration = item.hidden
-            ? "line-through"
-            : "";
-          const value = document.createTextNode(
-            isCountPercent
-              ? `${dataPars(DATA_COUNT)[index]} %`
-              : `$ ${replaceNumber(DATA_COUNT[index])}`
-          );
-          valueContainer.appendChild(value);
-          li.appendChild(boxSpan);
-          li.appendChild(textContainer);
-          li.appendChild(toopTip);
-          li.appendChild(valueContainer);
-          ul.appendChild(li);
-        });
+    }
+    // annotationLine
+    const annotationLine = {
+      id: 'annotationLine',
+      afterEvent: (chart, args, options) => {
+        const tooltipValueX = chart.$context.chart._sortedMetasets[0].data[globalDataXMousemoveEvent].x
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(tooltipValueX, chart.chartArea.top);
+        ctx.lineTo(tooltipValueX, chart.chartArea.bottom);
+        ctx.setLineDash([5, 3]);/*dashes are 5px and spaces are 3px*/
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#E1E1E1';
+        ctx.stroke();
+        ctx.restore();
       },
-    };
-    const thickness = {
-      id: "thickness",
-      beforeDraw: (chart, options) => {
-        let thickness = chart.options.plugins.thickness.thickness;
-        chart.getDatasetMeta(0).data[0].innerRadius = 47.21;
-        chart.getDatasetMeta(0).data[0].outerRadius = 82.83;
-        chart.getDatasetMeta(0).data[1].innerRadius = 47.21;
-        chart.getDatasetMeta(0).data[1].outerRadius = 77.59;
-        chart.getDatasetMeta(0).data[2].innerRadius = 47.21;
-        chart.getDatasetMeta(0).data[2].outerRadius = 72.59;
-        chart.getDatasetMeta(0).data[3].innerRadius = 47.21;
-        chart.getDatasetMeta(0).data[3].outerRadius = 66.1;
-      },
-    };
-    const shadowPlugin = {
-      beforeDraw: (chart, args, options) => {
-        const { ctx } = chart;
-        ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = -5;
-      },
-    };
-    const CHART_COLORS = {
-      blue: "#66A3D2",
-      yellow: "#FFC373",
-      purple: "#7272D5",
-      green: "#7FDBB3",
-    };
-    const CHART_TITLE = [
-      "Appreciation",
-      "Debt Paydown",
-      "Cash Flow",
-      "Depreciation",
-    ];
-    const createLabelTitle = () => {
-      const titleArr = [];
-      if (isCountPercent) {
-        dataPars(DATA_COUNT).map((item, index) => {
-          titleArr.push(`${CHART_TITLE[index]}`);
-        });
-      } else {
-        DATA_COUNT.map((item, index) => {
-          titleArr.push(`${CHART_TITLE[index]}`);
-        });
-      }
-      return titleArr;
-    };
-    const data = {
-      labels: createLabelTitle(),
-      datasets: [
-        {
-          data: dataPars(DATA_COUNT),
-          backgroundColor: Object.values(CHART_COLORS),
-        },
-      ],
-    };
-    const config = {
-      type: "doughnut",
-      data: data,
-      plugins: [thickness, htmlLegendPlugin],
+    }
+    let globalDataXMousemoveEvent = 0;
+    const configAppreciation = {
+      type: 'line',
+      data: appreciationDataChart,
       options: {
-        layout: {
-          padding: {
-            left: 0,
-            right: 0,
-          },
+        onHover: (e) => {
+          const canvasPosition = Chart.helpers.getRelativePosition(e, myChartL12);
+          // Substitute the appropriate scale IDs
+          const dataX = myChartL12.scales.xAxes.getValueForPixel(canvasPosition.x);
+          globalDataXMousemoveEvent = dataX;
+          showPointsLines(dataX, e.chart);
+          setLineChartPoints(dataX);
+          setCurrentSumControls(dataX);
         },
-        aspectRatio: 1,
-        rotation: -20,
-        borderRadius: 5,
-        borderWidth: 0,
-        responsive: true,
-        plugins: {
-          htmlLegend: {
-            containerID: "legend-containermb",
-          },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                return " " + context.label;
+        scales: {
+          yAxes: {
+            stacked: true,
+            position: 'right',
+            ticks: {
+              count: 4,
+              maxTicksLimit: 4,
+              callback: function (value, index, values) {
+                const pattern = (/\B(?=(\d{3})+(?!\d))/g);
+                return '$ ' + value.toFixed().toString().replace(pattern, ",");
               },
+              stepSize: 4,
             },
+          },
+          xAxes: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              display: false,
+              color: '#FFFFFF',
+              callback: function (tickValue, index, ticks) {
+                return index + 1;
+              }
+            },
+          }
+        },
+        markers: {
+          size: [4, 7]
+        },
+        plugins: {
+          tooltip: {
+            enabled: false,
           },
           legend: {
-            onClick() {},
-            display: false,
-            position: "bottom",
-            align: "start",
-            maxWidth: 150,
             labels: {
-              boxWidth: 15,
-              boxHeight: 15,
+              usePointStyle: true,
+              boxWidth: 8,
+              boxHeight: 8,
+            }
+          }
+        }
+      },
+      plugins: [myEventCatcher, annotationLine],
+    };
+    const configCashFlow = {
+      type: 'bar',
+      data: cashFlowDataChart,
+      options: {
+        onHover: (e, elements) => {
+          const canvasPosition = Chart.helpers.getRelativePosition(e, myChartL12);
+          // Substitute the appropriate scale IDs
+          const dataX = myChartL12.scales.xAxes.getValueForPixel(canvasPosition.x);
+          showPointsLines(dataX);
+          setCurrentSumControls(dataX);
+          // hoverOpacityChartCashFlow(elements);
+        },
+        scales: {
+          yAxes: {
+            borderColor: '#000',
+            gridLines: {
+              show: false,
+              color: '#ffffff',
+            },
+            stacked: true,
+            position: 'right',
+            ticks: {
+              count: 4,
+              maxTicksLimit: 4,
+              callback: function (value, index, values) {
+                const pattern = (/\B(?=(\d{3})+(?!\d))/g);
+                return '$ ' + value.toFixed().toString().replace(pattern, ",");
+              },
+              stepSize: 4,
             },
           },
-          thickness: {
-            thickness: thicknessData,
+          xAxes: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              display: false,
+              color: '#FFFFFF',
+              callback: function (tickValue, index, ticks) {
+                return index + 1;
+              }
+            },
+          }
+        },
+        plugins: {
+          tooltip: {
+            enabled: false,
+            external: function (context) {
+              customTooltip(context)
+            }
+          },
+          legend: {
+            labels: {
+              usePointStyle: true,
+              boxWidth: 8,
+              boxHeight: 8,
+            },
+          }
+        }
+      },
+      plugins: [
+        {
+          id: "myEventCatcher",
+          beforeEvent(chart, args, pluginOptions) {
+            const event = args.event;
+            if (event.type === "mouseout") {
+              setDefaultValueInHtml()
+            }
           },
         },
+      ],
+    }
+    const configLoanBalance = {
+      type: 'line',
+      data: appreciationDataLoanBalance,
+      options: {
+        onHover: (e) => {
+          const canvasPosition = Chart.helpers.getRelativePosition(e, myChartL12);
+          // Substitute the appropriate scale IDs
+          const dataX = myChartL12.scales.xAxes.getValueForPixel(canvasPosition.x);
+          globalDataXMousemoveEvent = dataX;
+          setLineChartPoints(dataX);
+          showPointsLines(dataX);
+          setCurrentSumControls(dataX);
+        },
+        scales: {
+          yAxes: {
+            stacked: true,
+            position: 'right',
+            ticks: {
+              count: 4,
+              maxTicksLimit: 4,
+              callback: function (value, index, values) {
+                const pattern = (/\B(?=(\d{3})+(?!\d))/g);
+                return '$ ' + value.toFixed().toString().replace(pattern, ",");
+              },
+              stepSize: 4,
+            },
+          },
+          xAxes: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              display: false,
+              color: '#FFFFFF',
+              callback: function (tickValue, index, ticks) {
+                return index + 1;
+              }
+            },
+          }
+        },
+        markers: {
+          size: [4, 7]
+        },
+        plugins: {
+          tooltip: {
+            enabled: false
+          },
+          legend: {
+            labels: {
+              usePointStyle: true,
+              boxWidth: 8,
+              boxHeight: 8,
+            }
+          }
+        }
       },
+      plugins: [myEventCatcher, annotationLine],
     };
-    const canvasWrap = document.querySelector(".canvas-wrapmb");
-    const chart = document.createElement("canvas");
-    canvasWrap.appendChild(chart);
-    const chartId = `myChartmb${id}`;
-    chart.id = chartId;
-    const ctx = document.getElementById(chartId);
-    const myChartmb = new Chart(ctx, config);
-    const sumTextCenter = document.querySelector(".sum-text-centermb");
-    sumTextCenter.innerText = `${
-      isCountPercent
-        ? SUM_COUNT_PERCENT + " %"
-        : "$" + replaceNumber(TOTAL_COUNT)
-    }`;
-
-    const elAnualType = document.querySelector(".current-annual-typemb");
-    const toggleCountType = document.querySelector(".toggle-count-valuemb");
-    toggleCountType.addEventListener("click", () => {
-      isCountPercent = !isCountPercent;
-      myChartmb.data.labels = createLabelTitle();
-      savedTooltips.forEach((item) => item.elem.tooltip("close"));
-      myChartmb.update();
-      savedTooltips = initTooltips();
-      sumTextCenter.innerText = `${
-        isCountPercent
-          ? SUM_COUNT_PERCENT + " %"
-          : "$" + replaceNumber(TOTAL_COUNT)
-      }`;
-      elAnualType.innerText = isCountPercent ? "Dollars" : "Percents";
+    let myChartL12 = new Chart(
+      document.getElementById('myChartL12'),
+      configAppreciation
+    );
+  
+    // Function runs on chart type select update
+    const showCashFlowData = () => {
+      myChartL12.destroy();
+      myChartL12 = new Chart(document.getElementById('myChartL12'), configCashFlow);
+    }
+    const showAppreciationData = () => {
+      myChartL12.destroy();
+      myChartL12 = new Chart(document.getElementById('myChartL12'), configAppreciation);
+    }
+    const showLoanBalance = () => {
+      myChartL12.destroy();
+      myChartL12 = new Chart(document.getElementById('myChartL12'), configLoanBalance);
+    }
+  
+    const elControls = document.querySelector('.controls');
+    elControls.addEventListener('click', (event) => {
+      let btn = event.target.closest('button');
+      if (!btn) return;
+      myChartL12.data.datasets[0].data = currentDataChart('cashFlow');
+      myChartL12.data.datasets[1].data = currentDataChart('appreciation');
+      myChartL12.data.datasets[2].data = currentDataChart('debtPaydown');
+      myChartL12.update();
     });
-  })();
-  savedTooltips = initTooltips();
-  savedTooltips?.forEach((item) => item.elem.tooltip("close"));
-</script>
+  
+    const elListPoints = document.querySelector('.list-points');
+  
+    //TODO
+    const elBtnControls = document.querySelectorAll('.chart-data-btn');
+    const clearActiveClass = (arr) => {
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].classList.remove('active');
+      }
+    }
+    elBtnControls[0].addEventListener('click', () => {
+      showAppreciationData();
+      clearActiveClass(elBtnControls)
+      elBtnControls[0].classList.add('active');
+    });
+    elBtnControls[1].addEventListener('click', () => {
+      showCashFlowData();
+      clearActiveClass(elBtnControls)
+      elBtnControls[1].classList.add('active');
+    });
+    elBtnControls[2].addEventListener('click', () => {
+      showLoanBalance();
+      clearActiveClass(elBtnControls)
+      elBtnControls[2].classList.add('active');
+    });
+    // end
+  
+    const reduceValue = (fn) => {
+      elAccumulatedTitle.innerHTML = parsValue(fn(appreciation));
+      elCashFlowTitle.innerHTML = parsValue(fn(cashFlow));
+      elProjectedEquityTitle.innerHTML = parsValue(fn(appreciation) - fn(cashFlow));
+    }
+  
+  
+  
+    const setCurrentSumControls = (year) => {
+      const sum = (arr) => arr.slice(0, year + 1).reduce((previousValue, currentValue) => previousValue + currentValue);
+      reduceValue(sum);
+    }
+    const setDefaultSumControls = () => {
+      const sum = (arr) => arr.reduce((previousValue, currentValue) => previousValue + currentValue);
+      reduceValue(sum);
+    }
+  
+    const createCurrentPointsTitles = (points) => {
+      elListPoints.innerHTML = null;
+      elListPoints.style.display = 'flex';
+      elSubTitle.style.display = 'none';
+      const createPointList = () => {
+        return points.filter(point => point !== undefined && typeof point === 'number').map(point => `<li>$ ${point.toFixed(3)}</li>`).join('');
+      }
+      elListPoints.insertAdjacentHTML('afterbegin', createPointList());
+    }
+    const showPointsLines = (year, chart) => {
+      if (myChartL12.config.type === 'line') {
+        let currentPoints = [];
+        for (let i = 0; i < 3; i++) {
+          currentPoints.push(myChartL12.data.datasets[i]?.data[year]);
+        }
+        createCurrentPointsTitles(currentPoints);
+      }
+      clearActiveClass(elLegendLabel);
+      elLegendLabel[year].classList.add('active');
+    }
+  
+    const legendCreator = () => {
+      let domElements = '';
+      for (let i = 1; i <= COUNT_YEARS; i++) {
+        domElements += `<div class="legend__label" data-year-value="${i - 1}">${i}</div>`;
+      }
+      return domElements;
+    }
+  
+    const legend = document.querySelector('.legend');
+    legend.insertAdjacentHTML('afterbegin', legendCreator());
+    const elLegendLabel = document.querySelectorAll('.legend__label');
+  
+    const elLegend = document.querySelector('.legend');
+    elLegend.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('legend__label')) return;
+      const year = e.target.dataset.yearValue;
+      setCurrentSumControls(Number(year));
+      setLineChartPoints(Number(year));
+      showPointsLines(Number(year));
+    });
+    const elLegendLabelArray = document.querySelectorAll('.legend__label');
+    elLegendLabelArray.forEach((item)=>{
+      item.addEventListener('mouseenter', (e) => {
+      if (!e.target.classList.contains('legend__label')) return;
+      const year = e.target.dataset.yearValue;
+      setCurrentSumControls(Number(year));
+      setLineChartPoints(Number(year));
+      showPointsLines(Number(year));
+    })
+    })
+
+    const setLineChartPoints = (year) => {
+      if (myChartL12.config.type === 'line') {
+        const points = Array(COUNT_YEARS).fill(false);
+        let pointRadius = 5;
+        points.splice(year, 1, pointRadius);
+        myChartL12.data.datasets[0].pointRadius = points;
+        myChartL12.data.datasets[1].pointRadius = points;
+        myChartL12.data.datasets[2].pointRadius = points;
+        myChartL12.update();
+      }
+    }
+  
+    //TODO working when we deleting update() for setDefaultValueInHtml()
+    const clearLineChartPoints = () => {
+      if (myChartL12.config.type === 'line') {
+        myChartL12.data.datasets[0].pointRadius = 0;
+        myChartL12.data.datasets[1].pointRadius = 0;
+        myChartL12.data.datasets[2].pointRadius = 0;
+        myChartL12.update();
+      }
+    }
+  
+    const setDefaultValueInHtml = () => {
+      elSubTitle.style.display = 'block';
+      elListPoints.style.display = 'none';
+      clearLineChartPoints();
+      setDefaultSumControls();
+      clearActiveClass(elLegendLabel);
+      if (myChartL12.config.type === 'bar') {
+        myChartL12.config.data.datasets[0].backgroundColor = 'rgba(127, 219, 179, 1)'
+      }
+      myChartL12.update();
+    }
+  
+    setDefaultSumControls();
+    Chart.defaults.animation.duration = 0;
+  
+}
+  </script>
+  
