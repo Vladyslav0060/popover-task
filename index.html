@@ -1,5 +1,11 @@
 <head>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"
+    integrity="sha512-USPCA7jmJHlCNRSFwUFq3lAm9SaOjwG8TaB8riqx3i/dAJqhaYilVnaf2eVUH5zjq89BU6YguUuAno+jpRvUqA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 </head>
 
 <body>
@@ -72,6 +78,7 @@
             48235, 49069, 51000,
           ],
           pointBorderColor: "#fff",
+          pointBackgroundColor: "rgba(176, 198, 254, 1)",
         },
         {
           label: "My Second dataset",
@@ -84,6 +91,7 @@
             50163, 58506, 58534,
           ],
           pointBorderColor: "#fff",
+          pointBackgroundColor: "rgba(252, 223, 152, 1)",
         },
         {
           type: "line",
@@ -114,41 +122,6 @@
     },
   ];
 
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "My First dataset",
-        backgroundColor: "rgba(176, 198, 254, 1)",
-        borderColor: "rgba(101, 162, 207, 1)",
-        data: [
-          2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224,
-          14955, 15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322, 29698,
-          31342, 31403, 35652, 37436, 38715, 44582, 44859, 47948, 48235, 49069,
-          51000,
-        ],
-      },
-      {
-        label: "My Second dataset",
-        backgroundColor: "rgba(246, 189, 22, 1)",
-        borderColor: "rgba(246, 189, 22, 1)",
-        data: [
-          5550, 5603, 6529, 6535, 8528, 8714, 12271, 12350, 13036, 15068, 23535,
-          24044, 26880, 27460, 29713, 29827, 30434, 30981, 31847, 32306, 33513,
-          36179, 41897, 42699, 43113, 43234, 46737, 48691, 50163, 58506, 58534,
-        ],
-      },
-      {
-        type: "line",
-        label: "Goal",
-        data: new Array(31).fill(30000),
-        fill: false,
-        borderColor: "red",
-        pointRadius: 0,
-      },
-    ],
-  };
-
   const config = {
     type: "line",
     data: mockData[0],
@@ -173,11 +146,10 @@
         },
         point: {
           display: "none",
-          pointRadius: (ctx) => {
-            console.log(ctx);
-            return ctx.index % 5 === 0 ? 10 : 0;
-          },
-          hoverRadius: 8,
+          pointRadius: (ctx) => (ctx.index % 5 === 0 ? 10 : 0),
+          hoverRadius: (ctx) => (ctx.index % 5 === 0 ? 5 : 0),
+          // hoverRadius: 5,
+          hitRadius: 10,
           borderWidth: 3,
           borderColor: "white",
         },
@@ -193,8 +165,17 @@
             drawBorder: false,
           },
           ticks: {
-            // maxTicksLimit: 6,
+            maxTicksLimit: 7,
             padding: 10,
+            color: "#898A8B",
+            font: {
+              size: 13,
+              heigth: 12,
+              weight: 400,
+            },
+            callback: (value) => {
+              return numeral(value).format("$ 0,0.[00]");
+            },
           },
         },
         xAxes: {
@@ -207,6 +188,10 @@
             maxRotation: 0,
             autoSkip: false,
             color: "#898A8B",
+            font: {
+              size: 12,
+              weight: 400,
+            },
             callback: function (val, index) {
               return index % 5 === 0 ? this.getLabelForValue(val) : "";
             },
@@ -235,8 +220,6 @@
     allTabs.forEach((tab) => tab.classList.remove("active"));
     activeTab = value;
     allTabs[value].classList.add("active");
-    console.log(mockData[activeTab]);
-    console.log(activeTab);
     newChart.destroy();
     newChart.data = mockData[activeTab];
     newChart = new Chart(document.getElementById("newChart"), config);
