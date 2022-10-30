@@ -18,6 +18,7 @@
       <button class="tab">Valuation</button>
     </div>
     <div class="content">
+      <h2 class="title">Projected Accumulated Wealth</h2>
       <canvas id="newChart"></canvas>
     </div>
   </div>
@@ -28,6 +29,80 @@
   let activeTab = 0;
 
   const allTabs = document.querySelectorAll(".tabs .tab");
+
+  const tooltipLine = {
+    id: "tooltipLine",
+    afterDraw: (chart) => {
+      if (
+        chart.tooltip?._active &&
+        chart.tooltip?._active.length &&
+        chart?.tooltip._active[1].index % 5 === 0
+      ) {
+        const activePoint = chart.tooltip._active[1];
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.moveTo(activePoint.element.x - 50, activePoint.element.y + 300);
+        ctx.lineTo(activePoint.element.x - 50, chart.chartArea.top + 100);
+        ctx.lineWidth = 1;
+        const gradient = chart.ctx.createLinearGradient(
+          0,
+          0,
+          0,
+          chart.chartArea.height
+        );
+        gradient.addColorStop(0.7, "rgba(245, 166, 35, 1)");
+        gradient.addColorStop(1, "rgba(245, 166, 35, 0.0001)");
+        ctx.strokeStyle = gradient;
+        chart.ctx.textAlign = "center";
+        chart.ctx.fillStyle = "rgba(137, 138, 139, 1)";
+        chart.ctx.fillText(
+          numeral(activePoint.element.$context.parsed.y).format("$ 0,0.[00]"),
+          activePoint.element.x - 50,
+          activePoint.element.y - 50
+        );
+        ctx.stroke();
+        ctx.restore();
+      }
+    },
+    beforeDraw: (chart) => {
+      if (
+        chart.tooltip?._active &&
+        chart.tooltip?._active.length &&
+        chart?.tooltip._active[0].index % 5 === 0
+      ) {
+        const activePoint = chart.tooltip._active[0];
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.moveTo(activePoint.element.x, chart.chartArea.top * 1.5);
+        ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
+        ctx.lineWidth = 1;
+        //creating gradient
+        const gradient = chart.ctx.createLinearGradient(
+          0,
+          0,
+          0,
+          chart.chartArea.height
+        );
+        gradient.addColorStop(0.3, "rgba(11, 97, 164, 1)");
+        gradient.addColorStop(0.7, "rgba(101, 162, 207, 1)");
+        gradient.addColorStop(1, "rgba(101, 162, 207, 1)");
+        ctx.strokeStyle = gradient;
+        chart.ctx.textAlign = "left";
+        chart.ctx.fillStyle = "rgba(137, 138, 139, 1)";
+        chart.ctx.fillText(
+          numeral(activePoint.element.$context.parsed.y).format("$ 0,0.[00]"),
+          activePoint.element.x,
+          activePoint.element.y - 100
+        );
+        ctx.stroke();
+        ctx.restore();
+      }
+    },
+  };
 
   const labels = [
     "Today",
@@ -68,8 +143,8 @@
       labels: labels,
       datasets: [
         {
-          label: "My First dataset",
-          backgroundColor: "rgba(176, 198, 254, 1)",
+          label: "Appreciation",
+          backgroundColor: "rgb(176, 198, 254)",
           borderColor: "rgba(176, 198, 254, 1)",
           data: [
             2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224,
@@ -79,9 +154,11 @@
           ],
           pointBorderColor: "#fff",
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
+          pointHoverBackgroundColor:
+            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
         },
         {
-          label: "My Second dataset",
+          label: "Debt Paydown",
           backgroundColor: "rgba(246, 189, 22, 1)",
           borderColor: "rgba(246, 189, 22, 1)",
           data: [
@@ -95,13 +172,17 @@
         },
         {
           type: "line",
-          label: "Goal",
+          label: "$ 10,000  Monthly Cashflow Goal",
           data: new Array(31).fill(30000),
           fill: false,
           borderColor: "rgba(231, 119, 119, 1)",
+          backgroundColor: "rgba(231, 119, 119, 1)",
           pointRadius: 0,
           hoverRadius: 0,
           borderWidth: 1,
+          pointBorderColor: "#fff",
+          borderWidth: 1,
+          pointHoverRadius: 0,
         },
       ],
     },
@@ -126,17 +207,35 @@
     type: "line",
     data: mockData[0],
     options: {
+      plugins: {
+        tooltip: {
+          enabled: false,
+        },
+        legend: {
+          labels: {
+            usePointStyle: true,
+            boxWidth: 8,
+            boxHeight: 8,
+            padding: 24,
+            font: {
+              size: 14,
+              weight: 500,
+              heigth: 17,
+            },
+          },
+        },
+      },
       interaction: {
         intersect: false,
         includeInvisible: false,
-        mode: "x",
+        mode: "index",
       },
       responsive: true,
       maintainAspectRatio: false,
       layout: {
         padding: {
           bottom: 30,
-          left: 25,
+          left: 58,
           right: 45,
         },
       },
@@ -148,10 +247,12 @@
           display: "none",
           pointRadius: (ctx) => (ctx.index % 5 === 0 ? 10 : 0),
           hoverRadius: (ctx) => (ctx.index % 5 === 0 ? 5 : 0),
-          // hoverRadius: 5,
-          hitRadius: 10,
+          pointHoverRadius: (ctx) => (ctx.index % 5 === 0 ? 14.5 : 0),
+          hoverBorderWidth: 2,
+          hoverBorderColor: "#fff",
+          hitRadius: 15,
           borderWidth: 3,
-          borderColor: "white",
+          borderColor: "#fff",
         },
       },
       scales: {
@@ -198,7 +299,10 @@
           },
         },
       },
-      plugins: {
+    },
+    plugins: [
+      tooltipLine,
+      {
         tooltip: {
           enabled: false,
         },
@@ -207,11 +311,16 @@
             usePointStyle: true,
             boxWidth: 8,
             boxHeight: 8,
-            padding: 15,
+            padding: 24,
+            font: {
+              size: 24,
+              weight: 500,
+              heigth: 17,
+            },
           },
         },
       },
-    },
+    ],
   };
 
   let newChart = new Chart(document.getElementById("newChart"), config);
@@ -252,22 +361,53 @@
     max-height: 20%;
     justify-content: center;
     align-items: center;
-    border: 3px solid grey;
-    border-radius: 5px;
+    background: #ffffff;
+    border: 1px solid #0b61a4;
+    position: relative;
+    height: 111px;
+    cursor: pointer;
+  }
+
+  .content-wrapper .tabs .tab::after {
+    content: "";
+    display: none;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-right: 10px solid #ffffff;
+    border-bottom: 8px solid transparent;
+    position: absolute;
+    right: -1px;
+    top: 50px;
   }
 
   .content-wrapper .tabs .tab.active {
-    background: rgba(11, 97, 164, 1);
+    background: #0b61a4;
     color: rgba(255, 255, 255, 1);
+  }
+
+  .content-wrapper .tabs .tab.active::after {
+    display: block;
+    top: auto;
   }
 
   .content-wrapper .content {
     display: flex;
+    flex-direction: column;
     width: 876px;
     border: 6px solid #898a8b;
     border-radius: 20px;
+    justify-content: flex-end;
   }
 
+  .content-wrapper .content h2.title {
+    justify-self: center;
+    margin: 0 auto;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 22px;
+    color: #555658;
+  }
   .content-wrapper .content canvas {
     align-self: flex-end !important;
     width: 100% !important;
