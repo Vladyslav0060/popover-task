@@ -32,40 +32,6 @@
 
   const tooltipLine = {
     id: "tooltipLine",
-    afterDraw: (chart) => {
-      if (
-        chart.tooltip?._active &&
-        chart.tooltip?._active.length &&
-        chart?.tooltip._active[1].index % 5 === 0
-      ) {
-        const activePoint = chart.tooltip._active[1];
-        const ctx = chart.ctx;
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([]);
-        ctx.moveTo(activePoint.element.x - 50, activePoint.element.y + 300);
-        ctx.lineTo(activePoint.element.x - 50, chart.chartArea.top + 100);
-        ctx.lineWidth = 1;
-        const gradient = chart.ctx.createLinearGradient(
-          0,
-          0,
-          0,
-          chart.chartArea.height
-        );
-        gradient.addColorStop(0.7, "rgba(245, 166, 35, 1)");
-        gradient.addColorStop(1, "rgba(245, 166, 35, 0.0001)");
-        ctx.strokeStyle = gradient;
-        chart.ctx.textAlign = "center";
-        chart.ctx.fillStyle = "rgba(137, 138, 139, 1)";
-        chart.ctx.fillText(
-          numeral(activePoint.element.$context.parsed.y).format("$ 0,0.[00]"),
-          activePoint.element.x - 50,
-          activePoint.element.y - 50
-        );
-        ctx.stroke();
-        ctx.restore();
-      }
-    },
     beforeDraw: (chart) => {
       if (
         chart.tooltip?._active &&
@@ -73,11 +39,12 @@
         chart?.tooltip._active[0].index % 5 === 0
       ) {
         const activePoint = chart.tooltip._active[0];
+        const activePoint1 = chart.tooltip._active[1];
         const ctx = chart.ctx;
         ctx.save();
         ctx.beginPath();
         ctx.setLineDash([]);
-        ctx.moveTo(activePoint.element.x, chart.chartArea.top * 1.5);
+        ctx.moveTo(activePoint.element.x, chart.chartArea.top);
         ctx.lineTo(activePoint.element.x, chart.chartArea.bottom);
         ctx.lineWidth = 1;
         //creating gradient
@@ -93,11 +60,16 @@
         ctx.strokeStyle = gradient;
         chart.ctx.textAlign = "left";
         chart.ctx.fillStyle = "rgba(137, 138, 139, 1)";
-        chart.ctx.fillText(
-          numeral(activePoint.element.$context.parsed.y).format("$ 0,0.[00]"),
-          activePoint.element.x,
-          activePoint.element.y - 100
-        );
+        // chart.ctx.fillText(
+        //   numeral(activePoint.element.$context.parsed.y).format("$ 0,0.[00]"),
+        //   activePoint.element.x + 20,
+        //   activePoint.element.y
+        // );
+        // chart.ctx.fillText(
+        //   numeral(activePoint1.element.$context.parsed.y).format("$ 0,0.[00]"),
+        //   activePoint1.element.x + 20,
+        //   activePoint1.element.y
+        // );
         ctx.stroke();
         ctx.restore();
       }
@@ -209,7 +181,9 @@
     options: {
       plugins: {
         tooltip: {
-          enabled: false,
+          filter: (item) => {
+            return item.dataIndex % 5 === 0 ? true : false;
+          },
         },
         legend: {
           labels: {
@@ -303,9 +277,9 @@
     plugins: [
       tooltipLine,
       {
-        tooltip: {
-          enabled: false,
-        },
+        // tooltip: {
+        //   enabled: false,
+        // },
         legend: {
           labels: {
             usePointStyle: true,
