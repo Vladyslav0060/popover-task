@@ -24,6 +24,7 @@
     </div>
     <div id="ProgressBg0">
       <div id="ProgressBar0"></div>
+      <div id="ProgressBar1"></div>
     </div>
     <div class="description-container">
       <p class="description-bar0" />
@@ -44,6 +45,7 @@
   }
 
   #ProgressBg0 {
+    display: flex;
     height: 8px;
     background: rgba(137, 138, 139, 0.3);
     border-radius: 30px;
@@ -86,6 +88,34 @@
     top: 1px;
     right: 16px;
   }
+
+  #ProgressBar1 {
+    background: linear-gradient(180deg, #0b61a4 0%, #3c8fd0 100%);
+    border: 0.5px solid #ffffff;
+    box-sizing: border-box;
+    border-radius: 30px;
+    height: 9px;
+    /* width: calc(1% + 5px); */
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    position: relative;
+    /* margin-left: -5px; */
+    /* margin-right: 50px; */
+  }
+
+  /* #ProgressBar1::before {
+    content: "";
+    display: block;
+    position: relative;
+    right: 5px;
+    top: 0;
+    width: 15px;
+    border-radius: 30px;
+    height: 7px;
+    border-left: 0.5px solid #ffffff;
+    background: linear-gradient(180deg, #0b61a4 0%, #3c8fd0 100%);
+  } */
 
   .goal-progress0 {
     display: flex;
@@ -232,8 +262,9 @@
       return text.toString().replace(pattern, ",");
     };
 
-    const CURRENT_SUM = 500000;
+    const CURRENT_SUM = 200000;
     const GOAL_SUM = 750000;
+    const BLUE_SUM = 200000;
     const DESCRIPTION_BAR = "RE Valuation Goal";
     const ElCurrentSum = document.querySelector(".goal-progress__current-sum0");
     ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
@@ -245,18 +276,26 @@
     let i = 0;
     const move = () => {
       let goalSumPercent = ((CURRENT_SUM * 83) / GOAL_SUM).toFixed();
+      let goalSumPercent1 = ((BLUE_SUM * 83) / GOAL_SUM).toFixed();
       if (i === 0) {
         i = 1;
         const progressBar = document.getElementById("ProgressBar0");
+        const progressBar1 = document.getElementById("ProgressBar1");
+        progressBar.style.marginRight = -1 + "%";
         let width = 0;
+        let width1 = 0;
         if (goalSumPercent >= 100) goalSumPercent = 100;
         const id = setInterval(() => {
-          if (width >= goalSumPercent) {
+          if (width >= goalSumPercent && width1 >= goalSumPercent1) {
+            progressBar1.style.width = width1 + 1 + "%";
             clearInterval(id);
             i = 0;
-          } else {
+          } else if (width <= goalSumPercent) {
             width++;
             progressBar.style.width = width + "%";
+          } else if (width1 <= goalSumPercent1) {
+            width1++;
+            progressBar1.style.width = width1 + "%";
           }
         }, 1);
       }
