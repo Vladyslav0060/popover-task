@@ -262,9 +262,9 @@
       return text.toString().replace(pattern, ",");
     };
 
-    const CURRENT_SUM = 200000;
+    const CURRENT_SUM = 750000;
     const GOAL_SUM = 750000;
-    const BLUE_SUM = 200000;
+    const BLUE_SUM = 2000000;
     const DESCRIPTION_BAR = "RE Valuation Goal";
     const ElCurrentSum = document.querySelector(".goal-progress__current-sum0");
     ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
@@ -293,7 +293,7 @@
           } else if (width <= goalSumPercent) {
             width++;
             progressBar.style.width = width + "%";
-          } else if (width1 <= goalSumPercent1) {
+          } else if (width1 <= goalSumPercent1 && width + width1 <= 100) {
             width1++;
             progressBar1.style.width = width1 + "%";
           }
