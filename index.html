@@ -263,8 +263,8 @@
     };
 
     const CURRENT_SUM = 750000;
-    const GOAL_SUM = 750000;
-    const BLUE_SUM = 2000000;
+    const GOAL_SUM = 700000;
+    const BLUE_SUM = 0;
     const DESCRIPTION_BAR = "RE Valuation Goal";
     const ElCurrentSum = document.querySelector(".goal-progress__current-sum0");
     ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
@@ -285,6 +285,7 @@
         let width = 0;
         let width1 = 0;
         if (goalSumPercent >= 100) goalSumPercent = 100;
+        if (BLUE_SUM < 100) progressBar1.style.display = "none";
         const id = setInterval(() => {
           if (width >= goalSumPercent && width1 >= goalSumPercent1) {
             progressBar1.style.width = width1 + 1 + "%";
