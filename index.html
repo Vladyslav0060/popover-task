@@ -17,22 +17,62 @@
 </head>
 
 <div>
-  <div id="progress0">
-    <div class="goal-progress0">
-      <span class="goal-progress__current-sum0"></span>
-      <span class="goal-progress__goal-sum0"></span>
+  <div class="progress">
+    <div class="goal-progress">
+      <span class="goal-progress__current-sum" id="curr_sum0"></span>
+      <span class="goal-progress__goal-sum" id="goal_sum0"></span>
     </div>
-    <div id="ProgressBg0">
-      <div id="ProgressBar0"></div>
-      <div id="ProgressBar1"></div>
+    <div class="ProgressBg0">
+      <div class="bar" id="ProgressBarGreen0"></div>
+      <div class="secondary-bar" id="ProgressBarBlue0"></div>
     </div>
     <div class="description-container">
-      <p class="description-bar0" />
+      <p class="description-bar" id="desc-bar0" />
       <div class="description-container__popover" data-toggle="popover">
         <img
           src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
           alt=""
-          id="tt"
+          id="tt0"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="progress">
+    <div class="goal-progress">
+      <span class="goal-progress__current-sum" id="curr_sum1"></span>
+      <span class="goal-progress__goal-sum" id="goal_sum1"></span>
+    </div>
+    <div class="ProgressBg0">
+      <div class="bar" id="ProgressBarGreen1"></div>
+      <div class="secondary-bar" id="ProgressBarBlue1"></div>
+    </div>
+    <div class="description-container">
+      <p class="description-bar" id="desc-bar1" />
+      <div class="description-container__popover" data-toggle="popover">
+        <img
+          src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+          alt=""
+          id="tt1"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="progress">
+    <div class="goal-progress">
+      <span class="goal-progress__current-sum" id="curr_sum2"></span>
+      <span class="goal-progress__goal-sum" id="goal_sum2"></span>
+    </div>
+    <div class="ProgressBg0">
+      <div class="bar" id="ProgressBarGreen2"></div>
+      <div class="secondary-bar" id="ProgressBarBlue2"></div>
+    </div>
+    <div class="description-container">
+      <p class="description-bar" id="desc-bar2" />
+      <div class="description-container__popover" data-toggle="popover">
+        <img
+          src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+          alt=""
+          id="tt2"
         />
       </div>
     </div>
@@ -40,11 +80,11 @@
 </div>
 
 <style>
-  #progress0 {
+  .progress {
     max-width: 477px;
   }
 
-  #ProgressBg0 {
+  .ProgressBg0 {
     display: flex;
     height: 8px;
     background: rgba(137, 138, 139, 0.3);
@@ -64,7 +104,7 @@
     right: 82px;
   }
 
-  #ProgressBar0 {
+  .bar {
     background: linear-gradient(180deg, #81deb5 0%, #65cea1 100%);
     border: 0.5px solid #ffffff;
     box-sizing: border-box;
@@ -77,7 +117,7 @@
     position: relative;
   }
 
-  #ProgressBar0:after {
+  .bar:after {
     content: "";
     display: block;
     width: 1px;
@@ -90,35 +130,19 @@
     z-index: 1000;
   }
 
-  #ProgressBar1 {
+  .secondary-bar {
     background: linear-gradient(180deg, #0b61a4 0%, #3c8fd0 100%);
     border: 0.5px solid #ffffff;
     box-sizing: border-box;
     border-radius: 30px;
     height: 9px;
-    /* width: calc(1% + 5px); */
     text-align: center;
     line-height: 30px;
     color: white;
     position: relative;
-    /* margin-left: -5px; */
-    /* margin-right: 50px; */
   }
 
-  /* #ProgressBar1::before {
-    content: "";
-    display: block;
-    position: relative;
-    right: 5px;
-    top: 0;
-    width: 15px;
-    border-radius: 30px;
-    height: 7px;
-    border-left: 0.5px solid #ffffff;
-    background: linear-gradient(180deg, #0b61a4 0%, #3c8fd0 100%);
-  } */
-
-  .goal-progress0 {
+  .goal-progress {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -126,8 +150,8 @@
     padding: 0 40px;
   }
 
-  .goal-progress0 .goal-progress__current-sum0,
-  .goal-progress__goal-sum0 {
+  .goal-progress .goal-progress__current-sum,
+  .goal-progress__goal-sum {
     font-family: Montserrat;
     font-style: normal;
     font-weight: normal;
@@ -157,7 +181,7 @@
     padding-top: 5px;
   }
 
-  .description-bar0 {
+  .description-bar {
     font-family: Montserrat;
     font-style: normal;
     font-weight: 500;
@@ -213,48 +237,62 @@
 
 <script>
   {
-    const id = "#tt";
+    const id = "#tt0";
     const $elem = $(id);
+    const id1 = "#tt1";
+    const $elem1 = $(id1);
+    const id2 = "#tt2";
+    const $elem2 = $(id2);
 
-    $elem.on("mouseenter", function (e) {
-      e.stopImmediatePropagation();
-      $(this).attr(
-        "src",
-        "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-      );
-      $elem.tooltip("open");
-    });
+    let arr = [{ "#tt0": $elem }, { "#tt1": $elem1 }, { "#tt2": $elem2 }];
 
-    $elem.tooltip({
-      items: id,
-      content: `<div class="tooltip-container">
+    const close_all_tooptips = () =>
+      arr.forEach((arrItem) => Object.values(arrItem)[0].tooltip("close"));
+
+    arr.forEach((el) => {
+      for (const [id, item] of Object.entries(el)) {
+        item.on("mouseenter", function (e) {
+          e.stopImmediatePropagation();
+          $(this).attr(
+            "src",
+            "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+          );
+          close_all_tooptips();
+          item.tooltip("open");
+        });
+
+        item.tooltip({
+          items: id,
+          content: `<div class="tooltip-container">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ex expedita quos, error laudantium beatae.
         <div class="close">
           <span>×</span>
         </div>
       </div>`,
-    });
+        });
 
-    $elem.on("click", function (e) {
-      $elem.tooltip("open");
-    });
+        item.on("click", function (e) {
+          item.tooltip("open");
+        });
 
-    $elem.on("mouseleave", function (e) {
-      e.stopImmediatePropagation();
-      $(this).attr(
-        "src",
-        "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-      );
-    });
+        item.on("mouseleave", function (e) {
+          e.stopImmediatePropagation();
+          $(this).attr(
+            "src",
+            "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+          );
+        });
 
-    $(document).mouseup(function (e) {
-      const container = $(".ui-tooltip");
-      if (
-        !container.is(e.target) &&
-        container.has(e.target).length !== 0 &&
-        e.target.parentElement.className === "close"
-      ) {
-        $elem.tooltip("close");
+        $(document).mouseup(function (e) {
+          const container = $(".ui-tooltip");
+          if (
+            !container.is(e.target) &&
+            container.has(e.target).length !== 0 &&
+            e.target.parentElement.className === "close"
+          ) {
+            item.tooltip("close");
+          }
+        });
       }
     });
 
@@ -263,51 +301,85 @@
       return text.toString().replace(pattern, ",");
     };
 
-    const CURRENT_SUM = 500000;
-    const GOAL_SUM = 1000000;
-    const BLUE_SUM = -100000;
-    const DESCRIPTION_BAR = "RE Valuation Goal";
-    const ElCurrentSum = document.querySelector(".goal-progress__current-sum0");
-    ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
-    const ElGoalSum = document.querySelector(".goal-progress__goal-sum0");
-    ElGoalSum.textContent = "$ " + replaceNumber(GOAL_SUM);
-    const ElDescriptionBar = document.querySelector(".description-bar0");
-    ElDescriptionBar.textContent = DESCRIPTION_BAR;
+    const progress_array = [
+      {
+        CURRENT_SUM: 1000000,
+        GOAL_SUM: 1000000,
+        BLUE_SUM: -100000,
+        DESCRIPTION_BAR: "RE Valuation Goal",
+      },
+      {
+        CURRENT_SUM: 750000,
+        GOAL_SUM: 750000,
+        BLUE_SUM: 500000,
+        DESCRIPTION_BAR: "RE Valuation Goal",
+      },
+      {
+        CURRENT_SUM: 750000,
+        GOAL_SUM: 750000,
+        BLUE_SUM: 0,
+        DESCRIPTION_BAR: "RE Valuation Goal",
+      },
+    ];
 
-    let i = 0;
-    const move = () => {
-      let goalSumPercent = ((CURRENT_SUM * 83) / GOAL_SUM).toFixed();
-      let goalSumPercent1 = ((Math.abs(BLUE_SUM) * 83) / GOAL_SUM).toFixed();
-      if (i === 0) {
-        i = 1;
-        const progressBar = document.getElementById("ProgressBar0");
-        const progressBar1 = document.getElementById("ProgressBar1");
-        progressBar.style.marginRight = -1 + "%";
-        let width = 0;
-        let width1 = 0;
-        if (goalSumPercent >= 100) goalSumPercent = 100;
-        if (BLUE_SUM < 100 && BLUE_SUM >= 0)
-          progressBar1.style.display = "none";
-        if (BLUE_SUM < 0) {
-          progressBar1.style.background = "red";
-          progressBar1.style.transform = "translate(-90%)";
-        }
-        const id = setInterval(() => {
-          console.log(goalSumPercent);
-          if (width >= goalSumPercent && width1 >= goalSumPercent1) {
-            progressBar1.style.width = width1 + 1 + "%";
-            clearInterval(id);
-            i = 0;
-          } else if (width <= goalSumPercent) {
-            width++;
-            progressBar.style.width = width + "%";
-          } else if (width1 <= goalSumPercent1 && width + width1 <= 100) {
-            width1++;
-            progressBar1.style.width = width1 + "%";
+    progress_array.forEach((progress_bar, index = 0) => {
+      const [CURRENT_SUM, GOAL_SUM, BLUE_SUM, DESCRIPTION_BAR] =
+        Object.values(progress_bar);
+      const ElCurrentSum = document.getElementById(`curr_sum${index}`);
+      ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
+      const ElGoalSum = document.getElementById(`goal_sum${index}`);
+      ElGoalSum.textContent = "$ " + replaceNumber(GOAL_SUM);
+      const ElDescriptionBar = document.getElementById(`desc-bar${index}`);
+      ElDescriptionBar.textContent = DESCRIPTION_BAR;
+
+      let i = 0;
+      const move = () => {
+        let goalSumPercent = ((CURRENT_SUM * 83) / GOAL_SUM).toFixed();
+        let goalSumPercent1 = ((BLUE_SUM * 83) / GOAL_SUM).toFixed();
+        if (i === 0) {
+          i = 1;
+          const progressBar = document.getElementById(
+            `ProgressBarGreen${index}`
+          );
+          const progressBar1 = document.getElementById(
+            `ProgressBarBlue${index}`
+          );
+          progressBar1.style.position = "absolute";
+          if (BLUE_SUM > 0)
+            progressBar1.style.maxWidth = 101 - goalSumPercent + "%";
+          BLUE_SUM < 0
+            ? (progressBar1.style.left = 83 - Math.abs(goalSumPercent1) + "%")
+            : (progressBar1.style.right =
+                100 - 83 - goalSumPercent1 > 0
+                  ? 100 - 83 - goalSumPercent1 + "%"
+                  : 0 + "%");
+          let width = 0;
+          let width1 = 0;
+          if (goalSumPercent >= 100) goalSumPercent = 100;
+          if (BLUE_SUM < 100 && BLUE_SUM >= 0)
+            progressBar1.style.display = "none";
+          if (BLUE_SUM < 0) {
+            progressBar1.style.background = "red";
           }
-        }, 1);
-      }
-    };
-    move();
+          const id = setInterval(() => {
+            if (
+              width >= goalSumPercent &&
+              width1 >= Math.abs(goalSumPercent1)
+            ) {
+              clearInterval(id);
+              i = 0;
+            } else if (width <= goalSumPercent) {
+              width++;
+              progressBar.style.minWidth = width + "%";
+            }
+            if (width1 < Math.abs(goalSumPercent1)) {
+              ++width1;
+              progressBar1.style.width = ++width1 + "%";
+            }
+          }, 1);
+        }
+      };
+      move();
+    });
   }
 </script>
