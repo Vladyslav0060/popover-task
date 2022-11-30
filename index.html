@@ -16,7 +16,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<div>
+<div class="wrapper">
   <div class="progress">
     <div class="goal-progress">
       <span class="goal-progress__current-sum" id="curr_sum0"></span>
@@ -77,9 +77,36 @@
       </div>
     </div>
   </div>
+
+  <div class="progress">
+    <div class="goal-progress">
+      <span class="goal-progress__current-sum" id="curr_sum3"></span>
+      <span class="goal-progress__goal-sum" id="goal_sum3"></span>
+    </div>
+    <div class="ProgressBg0">
+      <div class="bar" id="ProgressBarGreen3"></div>
+      <div class="secondary-bar" id="ProgressBarBlue3"></div>
+    </div>
+    <div class="description-container">
+      <p class="description-bar" id="desc-bar3" />
+      <div class="description-container__popover" data-toggle="popover">
+        <img
+          src="http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+          alt=""
+          id="tt3"
+        />
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .progress {
     max-width: 477px;
   }
@@ -163,7 +190,7 @@
 
   .description-container {
     display: flex;
-    justify-content: start;
+    justify-content: end;
     align-items: center;
     gap: 6px;
   }
@@ -216,22 +243,17 @@
     justify-content: center;
     height: 16px;
     position: absolute;
-    top: 6px;
-    right: 13px;
     text-align: center;
     color: white;
     border-radius: 50px;
-    background: #0b61a4;
+    /* background: #0b61a4; */
     border: none;
     line-height: 16px;
     font-size: 10px;
     cursor: pointer;
-  }
-
-  [role="tooltip"] .tooltip-container .close span {
-    position: relative;
-    left: 0.5px;
-    font-size: 20px;
+    top: 6px;
+    right: 13px;
+    background-image: url("./close.svg");
   }
 </style>
 
@@ -243,57 +265,73 @@
     const $elem1 = $(id1);
     const id2 = "#tt2";
     const $elem2 = $(id2);
+    const id3 = "#tt3";
+    const $elem3 = $(id3);
 
-    let arr = [{ "#tt0": $elem }, { "#tt1": $elem1 }, { "#tt2": $elem2 }];
+    let arr = [
+      {
+        id: "#tt0",
+        item: $elem,
+        text: "This is the content of a #tt0 tooltip",
+      },
+      {
+        id: "#tt1",
+        item: $elem1,
+        text: "This is the content of a #tt1 tooltip",
+      },
+      {
+        id: "#tt2",
+        item: $elem2,
+        text: "This is the content of a #tt2 tooltip",
+      },
+      {
+        id: "#tt3",
+        item: $elem3,
+        text: "This is the content of a #tt3 tooltip",
+      },
+    ];
 
     const close_all_tooptips = () =>
-      arr.forEach((arrItem) => Object.values(arrItem)[0].tooltip("close"));
+      arr.forEach((arrItem) => arrItem.item.tooltip("close"));
 
-    arr.forEach((el) => {
-      for (const [id, item] of Object.entries(el)) {
-        item.on("mouseenter", function (e) {
-          e.stopImmediatePropagation();
-          $(this).attr(
-            "src",
-            "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-          );
-          close_all_tooptips();
-          item.tooltip("open");
-        });
+    arr.forEach(({ id, item, text } = el) => {
+      item.on("mouseenter", function (e) {
+        e.stopImmediatePropagation();
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        );
+        close_all_tooptips();
+        item.tooltip("open");
+      });
 
-        item.tooltip({
-          items: id,
-          content: `<div class="tooltip-container">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ex expedita quos, error laudantium beatae.
-        <div class="close">
-          <span>×</span>
-        </div>
-      </div>`,
-        });
+      item.tooltip({
+        items: id,
+        content: `<div class="tooltip-container">${text}<div class="close" /></div>`,
+      });
 
-        item.on("click", function (e) {
-          item.tooltip("open");
-        });
+      item.on("click", function (e) {
+        item.tooltip("open");
+      });
 
-        item.on("mouseleave", function (e) {
-          e.stopImmediatePropagation();
-          $(this).attr(
-            "src",
-            "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-          );
-        });
+      item.on("mouseleave", function (e) {
+        e.stopImmediatePropagation();
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        );
+      });
 
-        $(document).mouseup(function (e) {
-          const container = $(".ui-tooltip");
-          if (
-            !container.is(e.target) &&
-            container.has(e.target).length !== 0 &&
-            e.target.parentElement.className === "close"
-          ) {
-            item.tooltip("close");
-          }
-        });
-      }
+      $(document).mouseup(function (e) {
+        const container = $(".ui-tooltip");
+        if (
+          !container.is(e.target) &&
+          container.has(e.target).length !== 0 &&
+          e.target.className === "close"
+        ) {
+          item.tooltip("close");
+        }
+      });
     });
 
     const replaceNumber = (text) => {
@@ -303,15 +341,15 @@
 
     const progress_array = [
       {
-        CURRENT_SUM: 1000000,
+        CURRENT_SUM: 300000,
         GOAL_SUM: 1000000,
-        BLUE_SUM: -100000,
+        BLUE_SUM: -150000,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
         CURRENT_SUM: 750000,
         GOAL_SUM: 750000,
-        BLUE_SUM: 500000,
+        BLUE_SUM: 1000000,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
@@ -320,13 +358,19 @@
         BLUE_SUM: 0,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
+      {
+        CURRENT_SUM: 500000,
+        GOAL_SUM: 750000,
+        BLUE_SUM: 100000,
+        DESCRIPTION_BAR: "RE Valuation Goal",
+      },
     ];
 
     progress_array.forEach((progress_bar, index = 0) => {
       const [CURRENT_SUM, GOAL_SUM, BLUE_SUM, DESCRIPTION_BAR] =
         Object.values(progress_bar);
       const ElCurrentSum = document.getElementById(`curr_sum${index}`);
-      ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM);
+      ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM + BLUE_SUM);
       const ElGoalSum = document.getElementById(`goal_sum${index}`);
       ElGoalSum.textContent = "$ " + replaceNumber(GOAL_SUM);
       const ElDescriptionBar = document.getElementById(`desc-bar${index}`);
@@ -348,10 +392,13 @@
           if (BLUE_SUM > 0)
             progressBar1.style.maxWidth = 101 - goalSumPercent + "%";
           BLUE_SUM < 0
-            ? (progressBar1.style.left = 83 - Math.abs(goalSumPercent1) + "%")
+            ? (progressBar1.style.left =
+                goalSumPercent - Math.abs(goalSumPercent1) > 0
+                  ? goalSumPercent - Math.abs(goalSumPercent1) + "%"
+                  : 0 + "%")
             : (progressBar1.style.right =
-                100 - 83 - goalSumPercent1 > 0
-                  ? 100 - 83 - goalSumPercent1 + "%"
+                100 - goalSumPercent1 - Math.abs(goalSumPercent) > 0
+                  ? 100 - goalSumPercent1 - Math.abs(goalSumPercent) + "%"
                   : 0 + "%");
           let width = 0;
           let width1 = 0;
@@ -373,6 +420,12 @@
               progressBar.style.minWidth = width + "%";
             }
             if (width1 < Math.abs(goalSumPercent1)) {
+              if (
+                BLUE_SUM < 0 &&
+                Math.abs(BLUE_SUM) > Math.abs(CURRENT_SUM) &&
+                width1 >= goalSumPercent
+              )
+                return;
               ++width1;
               progressBar1.style.width = ++width1 + "%";
             }
