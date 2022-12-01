@@ -347,9 +347,9 @@
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
-        CURRENT_SUM: 800000,
+        CURRENT_SUM: 910000,
         GOAL_SUM: 750000,
-        BLUE_SUM: 1000000,
+        BLUE_SUM: 500000,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
@@ -407,7 +407,8 @@
             (BLUE_SUM < 100 && BLUE_SUM >= 0) ||
             ((Math.abs(BLUE_SUM) / 83) * 100 <
               (Math.abs(GOAL_SUM) / 83) * 100 &&
-              BLUE_SUM >= 0)
+              BLUE_SUM >= 0 &&
+              CURRENT_SUM >= (GOAL_SUM / 83) * 100)
           )
             progressBar1.style.display = "none";
           if (BLUE_SUM < 0) {
