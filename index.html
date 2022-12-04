@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="wrapper-pie">
+      <div class="pie">
+        <h3 class="pie__title">Current Annual Return Breakdown</h3>
+        <div class="chart">
+          <canvas id="chart"></canvas>
+        </div>
+        <div class="legend-container" id="legend-container"></div>
+        <h4 class="toggle-count-valuemb">
+          Show Current Annual Return Breakdown<br />
+          in <span class="current-annual-typemb">Percents</span>
+        </h4>
+      </div>
+    </div>
+    <!-- <canvas id="chart"></canvas> -->
+    <!-- <div class="legend-container" id="legend-container"></div> -->
+    <script>
+      const CHART_COLORS = ["#66A3D2", "#FFC373", "#7272D5", "#7FDBB3"];
+      const CHART_TITLE = [
+        "Appreciation",
+        "Debt Paydown",
+        "Cash Flow",
+        "Depreciation",
+      ];
+      let savedTooltips = [];
+      const appreciation = 7000;
+      const debtPaydown = 8000;
+      const cashflow = 9000;
+      const depreciation = 5000;
+      const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
+      let isCountPercent = false;
+      const TOTAL_COUNT = (
+        appreciation +
+        debtPaydown +
+        cashflow +
+        depreciation
+      ).toFixed();
+
+      const replaceNumber = (text) => {
+        const pattern = /\B(?=(\d{3})+(?!\d))/g;
+        return text.toString().replace(pattern, ",");
+      };
+      const dataPars = (dataCount) => {
+        const dataPercent = [];
+        dataCount.map((item) => {
+          dataPercent.push(Number(((item * 100) / 300000).toFixed(1)));
+        });
+        return dataPercent;
+      };
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      const SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed();
+      const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
+      const BOT_RANGE = 50;
+      const DISPERSION = 30;
+      const maxVal = sortedPercent[0];
+
+      const thicknessData = sortedPercent.map((item) => {
+        let value;
+        if (item === maxVal) {
+          value = DISPERSION;
+        } else {
+          value = (item * DISPERSION) / maxVal;
+        }
+        return [BOT_RANGE, BOT_RANGE + value];
+      });
+
+      const createLabelTitle = () => {
+        const titleArr = [];
+        if (isCountPercent) {
+          dataPars(DATA_COUNT).map((item, index) => {
+            titleArr.push(`${CHART_TITLE[index]}`);
+          });
+        } else {
+          DATA_COUNT.map((item, index) => {
+            titleArr.push(`${CHART_TITLE[index]}`);
+          });
+        }
+        return titleArr;
+      };
+
+      const getLegendList = (chart, id) => {
+        console.log(chart, id);
+        let legendContainer = document.getElementById(id);
+        let listContainer = legendContainer?.querySelector("ul");
+        if (!listContainer) {
+          listContainer = document.createElement("ul");
+          listContainer.style.display = "flex";
+          listContainer.style.margin = 0;
+          listContainer.style.padding = 0;
+          legendContainer.appendChild(listContainer);
+        }
+        return listContainer;
+      };
+
+      const htmlLegendPlugin = {
+        id: "htmlLegend",
+        afterUpdate(chart, args, options) {
+          console.log("ge", options);
+          const ul = getLegendList(chart, options.containerID);
+          // Remove old legend items
+          while (ul.firstChild) {
+            ul.firstChild.remove();
+          }
+          // Reuse the built-in legendItems generator
+          const items =
+            chart.options.plugins.legend.labels.generateLabels(chart);
+          items.forEach((item, index = 0) => {
+            const toopTip = document.createElement("img");
+            toopTip.className = "tooltip";
+            toopTip.src =
+              "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg";
+            toopTip.alt = "";
+            toopTip.id = `tt${index + 1}`;
+            const li = document.createElement("li");
+            li.onclick = () => {
+              if (chart.config.type === "doughnut")
+                chart.toggleDataVisibility(item.index);
+              chart.update();
+            };
+            // Color box
+            const boxSpan = document.createElement("span");
+            boxSpan.style.background = item.fillStyle;
+            boxSpan.style.borderColor = item.strokeStyle;
+            boxSpan.style.borderWidth = item.lineWidth + "px";
+            // Text
+            const textContainer = document.createElement("p");
+            textContainer.style.color = item.fontColor;
+            textContainer.style.margin = 0;
+            textContainer.style.padding = 0;
+            textContainer.style.textDecoration = item.hidden
+              ? "line-through"
+              : "";
+            const text = document.createTextNode(item.text);
+            textContainer.appendChild(text);
+
+            const valueContainer = document.createElement("p");
+            valueContainer.style.color = item.fontColor;
+            valueContainer.style.margin = 0;
+            valueContainer.style.padding = 0;
+            valueContainer.style.textDecoration = item.hidden
+              ? "line-through"
+              : "";
+            const value = document.createTextNode(
+              isCountPercent
+                ? `${dataPars(DATA_COUNT)[index]} %`
+                : `$ ${replaceNumber(DATA_COUNT[index])}`
+            );
+            valueContainer.appendChild(value);
+            li.appendChild(boxSpan);
+            li.appendChild(textContainer);
+            li.appendChild(toopTip);
+            li.appendChild(valueContainer);
+            ul.appendChild(li);
+          });
+        },
+      };
+
+      const thickness = {
+        id: "thickness",
+        beforeDraw: (chart, options) => {
+          let thickness = chart.options.plugins.thickness.thickness;
+          chart.getDatasetMeta(0).data[0].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[0].outerRadius = 82.83;
+          chart.getDatasetMeta(0).data[1].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[1].outerRadius = 77.59;
+          chart.getDatasetMeta(0).data[2].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[2].outerRadius = 72.59;
+          chart.getDatasetMeta(0).data[3].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[3].outerRadius = 66.1;
+        },
+      };
+
+      var data = {
+        datasets: [
+          {
+            data: dataPars(DATA_COUNT),
+            backgroundColor: CHART_COLORS,
+          },
+        ],
+        labels: createLabelTitle(),
+      };
+
+      var options = {
+        responsive: false,
+        maintainAspectRatio: true,
+        plugins: {
+          htmlLegend: {
+            containerID: "legend-container",
+          },
+          thickness: {
+            thickness: thicknessData,
+          },
+          legend: {
+            position: "bottom",
+            display: false,
+            onClick: () => console.log("legend click"),
+          },
+          title: {
+            display: false,
+            text: "Chart.js Doughnut Chart",
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true,
+          },
+        },
+      };
+      var config = {
+        type: "doughnut",
+        data: data,
+        plugins: [thickness, htmlLegendPlugin],
+        options: options,
+      };
+
+      //Get the context of the canvas element we want to select
+      var ctx = document.getElementById("chart").getContext("2d");
+      var chart = new Chart(ctx, config);
+    </script>
+  </body>
+</html>
