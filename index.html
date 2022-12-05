@@ -19,7 +19,8 @@
       <div class="pie">
         <h3 class="pie__title">Current Annual Return Breakdown</h3>
         <div class="chart-wrapper">
-          <canvas id="chart-test"></canvas>
+          <p class="sum-text-center"></p>
+          <!-- <canvas id="chart-test"></canvas> -->
         </div>
         <div class="legend-container" id="legend-container"></div>
         <a href="#" class="toggle-count-value">
@@ -30,6 +31,99 @@
     </div>
 
     <script>
+      function initTooltips() {
+        const id1 = "#tt1";
+        const $elem1 = $(id1);
+        const id2 = "#tt2";
+        const $elem2 = $(id2);
+        const id3 = "#tt3";
+        const $elem3 = $(id3);
+        const id4 = "#tt4";
+        const $elem4 = $(id4);
+
+        const elems = [
+          {
+            elem: $elem1,
+            id: id1,
+            content: `This is content of the tootlip ${id1}.`,
+          },
+          {
+            elem: $elem2,
+            id: id2,
+            content: `This is content of the tootlip ${id2}.`,
+          },
+          {
+            elem: $elem3,
+            id: id3,
+            content: `This is content of the tootlip ${id3}.`,
+          },
+          {
+            elem: $elem4,
+            id: id4,
+            content: `This is content of the tootlip ${id4}.`,
+          },
+        ];
+
+        function closeIfOpened(id) {
+          const rest = elems.filter((item) => item.elem[0].id !== id);
+          rest.forEach((item) => item.elem.tooltip("close"));
+        }
+
+        elems.forEach((item) => {
+          item.elem.on("mouseenter", function (e) {
+            e.stopImmediatePropagation();
+            elems.forEach((item) => {
+              item.elem.tooltip("close");
+            });
+            $(this).attr(
+              "src",
+              "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+            );
+            closeIfOpened(item.elem[0].id);
+            item.elem.tooltip("open");
+          });
+
+          item.elem.tooltip({
+            items: item.id,
+            position: { my: "left-45% top", at: "left bottom+10" },
+            content: `
+      <div class="tooltip-container">
+        ${item.content}
+        <div class="close">
+          <span>×</span>
+        </div>
+      </div>`,
+          });
+
+          item.elem.on("click", function (e) {
+            item.elem.tooltip("open");
+          });
+
+          item.elem.on("mouseleave", function (e) {
+            e.stopImmediatePropagation();
+            $(this).attr(
+              "src",
+              "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+            );
+          });
+
+          $(document).mouseup(function (e) {
+            const container = $(".ui-tooltip");
+            if (
+              !container.is(e.target) &&
+              container.has(e.target).length !== 0 &&
+              e.target.parentElement.className === "close"
+            ) {
+              item.elem.tooltip("close");
+            }
+          });
+        });
+        return elems;
+      }
+    </script>
+
+    <script>
+      let savedTooltips = [];
       (function createChartDoughnut(id) {
         const CHART_COLORS = ["#66A3D2", "#FFC373", "#7272D5", "#7FDBB3"];
         const CHART_TITLE = [
@@ -38,14 +132,13 @@
           "Cash Flow",
           "Depreciation",
         ];
-        let savedTooltips = [];
         const appreciation = 7000;
         const debtPaydown = 8000;
         const cashflow = 9000;
         const depreciation = 5000;
         const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
         let isCountPercent = false;
-        const TOTAL_COUNT = (
+        let TOTAL_COUNT = (
           appreciation +
           debtPaydown +
           cashflow +
@@ -68,9 +161,7 @@
         const reducer = (accumulator, currentValue) =>
           accumulator + currentValue;
 
-        const SUM_COUNT_PERCENT = dataPars(DATA_COUNT)
-          .reduce(reducer)
-          .toFixed();
+        let SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed(1);
 
         const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
         const BOT_RANGE = 50;
@@ -86,20 +177,6 @@
           }
           return [BOT_RANGE, BOT_RANGE + value];
         });
-
-        const createLabelTitle = () => {
-          const titleArr = [];
-          if (isCountPercent) {
-            dataPars(DATA_COUNT).map((item, index) => {
-              titleArr.push(`${CHART_TITLE[index]}`);
-            });
-          } else {
-            DATA_COUNT.map((item, index) => {
-              titleArr.push(`${CHART_TITLE[index]}`);
-            });
-          }
-          return titleArr;
-        };
 
         const getLegendList = (chart, id) => {
           let legendContainer = document.getElementById(id);
@@ -125,6 +202,7 @@
             // Reuse the built-in legendItems generator
             const items =
               chart.options.plugins.legend.labels.generateLabels(chart);
+
             items.forEach((item, index = 0) => {
               const toopTip = document.createElement("img");
               toopTip.className = "tooltip";
@@ -139,8 +217,33 @@
                   e.target.className === "tooltip"
                 )
                   return;
+                const isVisible = chart.getDataVisibility(item.index);
+                if (isVisible) {
+                  SUM_COUNT_PERCENT = (
+                    SUM_COUNT_PERCENT -
+                    ((DATA_COUNT[index] * 100) / 300000).toFixed(1)
+                  ).toFixed(1);
+
+                  TOTAL_COUNT -= DATA_COUNT[index];
+                } else {
+                  SUM_COUNT_PERCENT =
+                    +SUM_COUNT_PERCENT +
+                    +((DATA_COUNT[index] * 100) / 300000).toFixed(1);
+
+                  TOTAL_COUNT += +DATA_COUNT[index];
+                }
+
                 chart.toggleDataVisibility(item.index);
+                const sumTextCenter =
+                  document.querySelector(".sum-text-center");
+                sumTextCenter.innerText = `${
+                  isCountPercent
+                    ? SUM_COUNT_PERCENT + " %"
+                    : "$" + replaceNumber(TOTAL_COUNT)
+                }`;
+                savedTooltips?.forEach((item) => item.elem.tooltip("close"));
                 chart.update();
+                savedTooltips = initTooltips();
               };
               // Color box
               const boxSpan = document.createElement("span");
@@ -195,6 +298,20 @@
           },
         };
 
+        const createLabelTitle = () => {
+          const titleArr = [];
+          if (isCountPercent) {
+            dataPars(DATA_COUNT).map((item, index) => {
+              titleArr.push(`${CHART_TITLE[index]}`);
+            });
+          } else {
+            DATA_COUNT.map((item, index) => {
+              titleArr.push(`${CHART_TITLE[index]}`);
+            });
+          }
+          return titleArr;
+        };
+
         const data = {
           datasets: [
             {
@@ -217,6 +334,17 @@
           plugins: {
             htmlLegend: {
               containerID: "legend-container",
+            },
+            legend: {
+              onClick() {},
+              display: false,
+              position: "bottom",
+              align: "start",
+              maxWidth: 150,
+              labels: {
+                boxWidth: 15,
+                boxHeight: 15,
+              },
             },
             thickness: {
               thickness: thicknessData,
@@ -244,22 +372,39 @@
         };
 
         const canvasWrap = document.querySelector(".chart-wrapper");
+        const chart = document.createElement("canvas");
+        canvasWrap.appendChild(chart);
         const chartId = `chart-${id}`;
-        const canvas = document.createElement("canvas");
-        canvas.id = chartId;
-        canvasWrap.appendChild(canvas);
+        chart.id = chartId;
         const ctx = document.getElementById(chartId);
-        const chart = new Chart(ctx, config);
+        const myChartmb = new Chart(ctx, config);
 
-        const elAnnualType = document.querySelector(".current-annual-type");
+        const sumTextCenter = document.querySelector(".sum-text-center");
+        sumTextCenter.innerText = `${
+          isCountPercent
+            ? SUM_COUNT_PERCENT + " %"
+            : "$" + replaceNumber(TOTAL_COUNT)
+        }`;
+        const elAnualType = document.querySelector(".current-annual-type");
         const toggleCountType = document.querySelector(".toggle-count-value");
         toggleCountType.addEventListener("click", () => {
           isCountPercent = !isCountPercent;
-          chart.data.labels = createLabelTitle();
-          chart.update();
-          elAnnualType.innerText = isCountPercent ? "Dollars" : "Percents";
+          myChartmb.data.labels = createLabelTitle();
+          savedTooltips.forEach((item) => item.elem.tooltip("close"));
+          myChartmb.update();
+          savedTooltips = initTooltips();
+          savedTooltips?.forEach((item) => item.elem.tooltip("close"));
+          elAnualType.innerText = isCountPercent ? "Dollars" : "Percents";
+          const sumTextCenter = document.querySelector(".sum-text-center");
+          sumTextCenter.innerText = `${
+            isCountPercent
+              ? SUM_COUNT_PERCENT + " %"
+              : "$" + replaceNumber(TOTAL_COUNT)
+          }`;
         });
       })("test");
+      savedTooltips = initTooltips();
+      savedTooltips?.forEach((item) => item.elem.tooltip("close"));
     </script>
   </body>
 </html>
