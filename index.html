@@ -8,7 +8,6 @@
       rel="stylesheet"
       href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
     />
-    <link rel="stylesheet" href="./styles.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,6 +28,183 @@
         </a>
       </div>
     </div>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        margin: 0 auto;
+      }
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .wrapper-pie {
+        display: flex;
+        justify-content: center;
+        min-width: 320px;
+        max-width: 477px;
+        width: 477px;
+        min-height: 326px;
+        padding: 0;
+      }
+
+      .wrapper-pie > .pie {
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 27px 170px 27px;
+        gap: 27px;
+        padding: 0;
+      }
+
+      .pie > h3.pie__title {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 400;
+        font-size: 22px;
+        line-height: 27px;
+        text-align: center;
+        grid-column: 1/5;
+        grid-row: 1/1;
+      }
+
+      .pie > .chart-wrapper {
+        width: 165px;
+        height: 165px;
+        grid-column: 1/3;
+        grid-row: 2/2;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .pie > .chart-wrapper > .sum-text-center {
+        position: absolute;
+        z-index: -1;
+      }
+
+      .wrapper-pie .pie .toggle-count-value {
+        width: 100%;
+        text-align: center;
+        grid-column: 1/5;
+        grid-row: 3/3;
+      }
+
+      .pie > .chart-wrapper > .donught-chart {
+        height: 170px !important;
+        width: 170px !important;
+      }
+
+      .pie > .legend-container {
+        height: fit-content;
+        width: fit-content;
+        min-width: 200px;
+        z-index: 10;
+        grid-column: 3/5;
+        grid-row: 2/2;
+      }
+
+      .legend-container > ul.legend-list {
+        flex-direction: column;
+        min-width: 202px;
+      }
+
+      .legend-container > ul > li {
+        display: flex;
+        flex-direction: row;
+        margin-left: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+        cursor: pointer;
+      }
+      .legend-container > ul li span {
+        display: inline-block;
+        height: 20px;
+        margin-right: 10px;
+        width: 20px;
+        border-radius: 3px;
+      }
+
+      .legend-container > ul li p {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 15px;
+        color: #3c3e40;
+        margin-bottom: 10px;
+      }
+
+      [role="tooltip"] {
+        border: 1px solid rgba(11, 97, 164, 1) !important;
+        box-shadow: none;
+        border-radius: 5px;
+        max-width: 400px;
+      }
+
+      [role="tooltip"] .ui-tooltip-content {
+        padding: 15px 35px 15px 15px;
+        font-family: "Montserrat", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 15px;
+        letter-spacing: 0.025em;
+        color: #3c3e40;
+      }
+
+      [role="tooltip"] .tooltip-container .close {
+        display: flex;
+        width: 16px;
+        align-items: center;
+        justify-content: center;
+        height: 16px;
+        position: absolute;
+        text-align: center;
+        color: white;
+        border-radius: 50px;
+        border: none;
+        line-height: 16px;
+        font-size: 10px;
+        cursor: pointer;
+        top: 6px;
+        right: 13px;
+        background-image: url("https://s3.amazonaws.com/appforest_uf/f1628768879842x219275027212698660/Close%20Property%20Info.svg");
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+      ul.legend-list > li > img.tooltip {
+        width: 16px;
+        height: 16px;
+        padding: 0 5px 0 5px;
+      }
+
+      @media all and (max-width: 640px) {
+        .wrapper-pie {
+          justify-content: center;
+          width: 360px;
+          height: 480px;
+        }
+
+        .wrapper-pie .pie {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+        }
+
+        h3.pie__title {
+          height: 54px;
+        }
+      }
+    </style>
 
     <script>
       function initTooltips() {
@@ -89,9 +265,7 @@
             content: `
       <div class="tooltip-container">
         ${item.content}
-        <div class="close">
-          <span>×</span>
-        </div>
+        <div class="close" />
       </div>`,
           });
 
@@ -112,7 +286,7 @@
             if (
               !container.is(e.target) &&
               container.has(e.target).length !== 0 &&
-              e.target.parentElement.className === "close"
+              e.target.className === "close"
             ) {
               item.elem.tooltip("close");
             }
@@ -183,6 +357,7 @@
           let listContainer = legendContainer?.querySelector("ul");
           if (!listContainer) {
             listContainer = document.createElement("ul");
+            listContainer.className = "legend-list";
             listContainer.style.display = "flex";
             listContainer.style.margin = 0;
             listContainer.style.padding = 0;
@@ -325,6 +500,9 @@
         const options = {
           responsive: false,
           maintainAspectRatio: false,
+          tooltip: {
+            bodyColor: "red",
+          },
           layout: {
             padding: {
               left: 0,
@@ -376,6 +554,7 @@
         canvasWrap.appendChild(chart);
         const chartId = `chart-${id}`;
         chart.id = chartId;
+        chart.className = "donught-chart";
         const ctx = document.getElementById(chartId);
         const myChartmb = new Chart(ctx, config);
 
