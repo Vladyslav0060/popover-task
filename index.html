@@ -344,9 +344,9 @@
 
     const progress_array = [
       {
-        CURRENT_SUM: 300000,
+        CURRENT_SUM: -100000,
         GOAL_SUM: 1000000,
-        BLUE_SUM: -150000,
+        BLUE_SUM: -50000,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
@@ -362,7 +362,7 @@
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
-        CURRENT_SUM: 500000,
+        CURRENT_SUM: -50000,
         GOAL_SUM: 750000,
         BLUE_SUM: 100000,
         DESCRIPTION_BAR: "RE Valuation Goal",
@@ -405,6 +405,14 @@
                   : 0 + "%");
           let width = 0;
           let width1 = 0;
+          if (CURRENT_SUM + BLUE_SUM <= 0) {
+            progressBar.style.display = "none";
+            progressBar1.style.display = "none";
+          }
+          if (CURRENT_SUM < 0) {
+            progressBar.style.display = "none";
+            progressBar1.style.left = 0;
+          }
           if (goalSumPercent >= 100) goalSumPercent = 100;
           if (
             (BLUE_SUM < 100 && BLUE_SUM >= 0) ||
