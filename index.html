@@ -350,9 +350,9 @@
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
-        CURRENT_SUM: 910000,
+        CURRENT_SUM: 100000,
         GOAL_SUM: 750000,
-        BLUE_SUM: 500000,
+        BLUE_SUM: 75000,
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
       {
@@ -426,6 +426,7 @@
             progressBar1.style.background = "red";
           }
           const id = setInterval(() => {
+            if (GOAL_SUM / BLUE_SUM > 9.76) ++width1;
             if (
               width >= goalSumPercent &&
               width1 >= Math.abs(goalSumPercent1)
