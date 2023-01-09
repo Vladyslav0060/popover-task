@@ -1,8 +1,13 @@
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script
     src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"
     integrity="sha512-USPCA7jmJHlCNRSFwUFq3lAm9SaOjwG8TaB8riqx3i/dAJqhaYilVnaf2eVUH5zjq89BU6YguUuAno+jpRvUqA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+    integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   ></script>
@@ -58,18 +63,6 @@
         gradient.addColorStop(0.7, "rgba(101, 162, 207, 1)");
         gradient.addColorStop(1, "rgba(101, 162, 207, 1)");
         ctx.strokeStyle = gradient;
-        // chart.ctx.textAlign = "left";
-        // chart.ctx.fillStyle = "rgba(137, 138, 139, 1)";
-        // chart.ctx.fillText(
-        //   numeral(activePoint?.element.$context.parsed.y).format("$ 0,0.[00]"),
-        //   activePoint?.element.x + 20,
-        //   activePoint?.element.y
-        // );
-        // chart.ctx.fillText(
-        //   numeral(activePoint1?.element.$context.parsed.y).format("$ 0,0.[00]"),
-        //   activePoint1?.element.x + 20,
-        //   activePoint1?.element.y
-        // );
         ctx.stroke();
         ctx.restore();
       }
@@ -133,12 +126,7 @@
           label: "Debt Paydown",
           backgroundColor: "rgba(246, 189, 22, 1)",
           borderColor: "rgba(246, 189, 22, 1)",
-          data: [
-            5550, 5603, 6529, 6535, 8528, 8714, 12271, 12350, 13036, 15068,
-            23535, 24044, 26880, 27460, 29713, 29827, 30434, 30981, 31847,
-            32306, 33513, 36179, 41897, 42699, 43113, 43234, 46737, 48691,
-            50163, 58506, 58534,
-          ],
+          data: null,
           pointBorderColor: "#fff",
           pointBackgroundColor: "rgba(252, 223, 152, 1)",
         },
@@ -380,6 +368,11 @@
             boxWidth: 8,
             boxHeight: 8,
             padding: 24,
+            filter: function (legendItem, data) {
+              let labelData =
+                data.datasets[legendItem.datasetIndex]?.data?.length || null;
+              return !!labelData ? true : false;
+            },
             font: {
               size: 14,
               weight: 500,
@@ -466,9 +459,6 @@
     plugins: [
       tooltipLine,
       {
-        // tooltip: {
-        //   enabled: false,
-        // },
         legend: {
           labels: {
             usePointStyle: true,
@@ -558,8 +548,7 @@
     display: flex;
     flex-direction: column;
     width: 876px;
-    border: 6px solid #898a8b;
-    border-radius: 20px;
+    border: 2px solid #0c60a4;
     justify-content: flex-end;
   }
 
