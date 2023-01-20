@@ -491,23 +491,8 @@ color: #898A8B;
   
     const appreciationDataChart = {
       labels: labels(),
-      datasets: [{
-        pointRadius: 0,
-        label: 'Cash Flow',
-        data: currentDataChart('cashFlow'),
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: '#F6BD16',
-        tension: 1,
-        fill: true,
-      }, {
-        pointRadius: 0,
-        label: 'Appreciation',
-        data: currentDataChart('appreciation'),
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: '#65A2CF',
-        tension: 1,
-        fill: true
-      }, {
+      datasets: [
+        {
         pointRadius: 0,
         label: 'Debt Paydown',
         data: currentDataChart('debtPaydown'),
@@ -515,7 +500,27 @@ color: #898A8B;
         backgroundColor: '#7FDBB3',
         tension: 1,
         fill: true
-      }]
+      },
+        {
+        pointRadius: 0,
+        label: 'Cash Flow',
+        data: currentDataChart('cashFlow'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#F6BD16',
+        tension: 1,
+        fill: true,
+      },
+        {
+        pointRadius: 0,
+        label: 'Appreciation',
+        data: currentDataChart('appreciation'),
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: '#65A2CF',
+        tension: 1,
+        fill: true
+      }, 
+
+    ]
     };
     const cashFlowDataChart = {
       labels: labels(),
