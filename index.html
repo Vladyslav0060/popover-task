@@ -500,9 +500,9 @@
       37159, 38404, 39329, 42952, 43661, 45302, 47902, 48230, 49125, 49348,
     ];
     const debtPaydown = [
-      -2414, 3640, 3935, 4069, 4509, 5567, 11163, 11715, 12076, 12485, 14203,
-      14804, 15543, 17107, 18938, 19572, 19828, 20650, 20817, 21454, 22282,
-      26320, 26457, 27371, 33638, 34753, 35842, 36453, 41329, 44746,
+      -2414.242, 3640, 3935, 4069, 4509, 5567, 11163, 11715, 12076, 12485,
+      14203, 14804, 15543, 17107, 18938, 19572, 19828, 20650, 20817, 21454,
+      22282, 26320, 26457, 27371, 33638, 34753, 35842, 36453, 41329, 44746,
     ];
     const reducerData = (date) => {
       const arr = [];
@@ -556,7 +556,7 @@
       if (typeof data !== "string") {
         throw new Error("arg not a sting");
       }
-      return chartDates[data];
+      return chartDates[data].map((item) => Math.trunc(item));
     };
 
     const appreciationDataChart = {
@@ -596,7 +596,7 @@
       datasets: [
         {
           label: "Cash Flow",
-          data: cashFlow,
+          data: cashFlow.map((item) => Math.trunc(item)),
           backgroundColor: "rgba(127, 219, 179, 1)",
         },
       ],
