@@ -488,9 +488,10 @@
 
     const COUNT_YEARS = 30;
     const cashFlow = [
-      -2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224, 14955,
-      15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322, 29698, 31342,
-      31403, 35652, 37436, 38715, 44582, 44859, 47948, 48235, 49069,
+      -2295, 3950.24, 4550.111, 7420.244, 7845, 10583, 11584, 11787, 12664,
+      13224, 14955, 15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322,
+      29698, 31342, 31403, 35652, 37436, 38715, 44582, 44859, 47948, 48235,
+      49069,
     ];
     const appreciation = [
       -4332, 9179, 14838, 16193, 16248, 16998, 19873, 20290, 20400, 22003,
@@ -554,7 +555,7 @@
       if (typeof data !== "string") {
         throw new Error("arg not a sting");
       }
-      return chartDates[data].map((item) => (item >= 0 ? item : 0));
+      return chartDates[data].map((item) => (item >= 0 ? Math.trunc(item) : 0));
     };
 
     const appreciationDataChart = {
@@ -594,7 +595,7 @@
       datasets: [
         {
           label: "Cash Flow",
-          data: cashFlow.map((item) => (item >= 0 ? item : 0)),
+          data: cashFlow.map((item) => (item >= 0 ? Math.trunc(item) : 0)),
           backgroundColor: "rgba(127, 219, 179, 1)",
         },
       ],
@@ -693,7 +694,7 @@
                 const pattern = /\B(?=(\d{3})+(?!\d))/g;
                 return "$ " + value.toFixed().toString().replace(pattern, ",");
               },
-              stepSize: 0,
+              stepSize: 4,
             },
           },
           xAxes: {
@@ -760,7 +761,7 @@
                 const pattern = /\B(?=(\d{3})+(?!\d))/g;
                 return "$ " + value.toFixed().toString().replace(pattern, ",");
               },
-              stepSize: 0,
+              stepSize: 4,
             },
           },
           xAxes: {
@@ -833,7 +834,7 @@
                 const pattern = /\B(?=(\d{3})+(?!\d))/g;
                 return "$ " + value.toFixed().toString().replace(pattern, ",");
               },
-              stepSize: 0,
+              stepSize: 4,
             },
           },
           xAxes: {
