@@ -131,6 +131,14 @@
     right: 82px;
   }
 
+  .bar-info-tooltip {
+    border: 1px solid grey !important;
+  }
+
+  .bar-info-tooltip .ui-tooltip-content {
+    padding: 0 !important;
+  }
+
   .bar {
     background: linear-gradient(180deg, #81deb5 0%, #65cea1 100%);
     border: 0.5px solid #ffffff;
@@ -220,10 +228,14 @@
   }
 
   [role="tooltip"] {
-    border: 1px solid rgba(11, 97, 164, 1) !important;
+    /* border: 1px solid rgba(11, 97, 164, 1); */
     box-shadow: none;
     border-radius: 5px;
     max-width: 400px;
+  }
+
+  .ui-widget.ui-widget-content {
+    border: 1px solid rgba(11, 97, 164, 1);
   }
 
   [role="tooltip"] .ui-tooltip-content {
@@ -293,6 +305,15 @@
         text: "This is the content of a #tt3 tooltip",
       },
     ];
+
+    $(function () {
+      $(".bar").tooltip({
+        tooltipClass: "bar-info-tooltip",
+      });
+      $(".secondary-bar").tooltip({
+        tooltipClass: "bar-info-tooltip",
+      });
+    });
 
     const close_all_tooptips = () =>
       arr.forEach((arrItem) => arrItem.item.tooltip("close"));
@@ -368,7 +389,8 @@
         DESCRIPTION_BAR: "RE Valuation Goal",
       },
     ];
-
+    // const items = document.getElementsByClassName("bar");
+    // console.log(items);
     progress_array.forEach((progress_bar, index = 0) => {
       const [CURRENT_SUM, GOAL_SUM, BLUE_SUM, DESCRIPTION_BAR] =
         Object.values(progress_bar);
@@ -391,6 +413,8 @@
           const progressBar1 = document.getElementById(
             `ProgressBarBlue${index}`
           );
+          progressBar.title = "$ " + replaceNumber(CURRENT_SUM);
+          progressBar1.title = "$ " + replaceNumber(BLUE_SUM);
           progressBar1.style.position = "absolute";
           if (BLUE_SUM > 0)
             progressBar1.style.maxWidth = 101 - goalSumPercent + "%";
