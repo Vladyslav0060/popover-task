@@ -98,6 +98,8 @@
       </div>
     </div>
   </div>
+
+  <button id="click">click to change data</button>
 </div>
 
 <style>
@@ -273,7 +275,207 @@
 </style>
 
 <script>
-  {
+  class Api {
+    #amount;
+    #termInMonths;
+    #interestRate;
+    #startingBalance;
+    #additionalPayment;
+    constructor(
+      amount,
+      termInMonths,
+      interestRate,
+      startingBalance,
+      additionalPayment = 0
+    ) {
+      this.#amount = amount;
+      this.#termInMonths = termInMonths;
+      this.#interestRate = interestRate;
+      this.#startingBalance = startingBalance;
+      this.#additionalPayment = additionalPayment;
+    }
+
+    #roundNumber = (number) => Math.round(number * 100) / 100; // round to 2 digits
+
+    #calculateAmortization = (
+      balance,
+      monthlyPayment,
+      termInMonths,
+      interestPerMonth,
+      additionalPayment
+    ) => {
+      let amortization = [];
+      let currentBalance = balance;
+      let prevousBalance = 0;
+      let totalInterest = 0;
+      let totalPayment = 0;
+      let toInterest = 0;
+      let toPrincipal = 0;
+      let currentMonth = 1;
+
+      while (currentMonth < parseInt(termInMonths) + 1) {
+        toInterest = this.#roundNumber(currentBalance * interestPerMonth);
+        totalInterest = this.#roundNumber(totalInterest + toInterest);
+        toPrincipal = monthlyPayment - toInterest + parseInt(additionalPayment);
+        totalPayment = toPrincipal + toInterest;
+        prevousBalance = currentBalance;
+        currentBalance = this.#roundNumber(currentBalance - toPrincipal);
+
+        if (currentBalance < 0) {
+          totalPayment = prevousBalance + toInterest;
+          toPrincipal = prevousBalance;
+          currentBalance = 0;
+        }
+
+        amortization.push({
+          month: currentMonth,
+          principal: toPrincipal,
+          totalPayment,
+          interest: toInterest,
+          totalInterest: totalInterest,
+          balance: currentBalance,
+        });
+        if (currentBalance === 0) break;
+        currentMonth++;
+      }
+      return { totalInterest: totalInterest, amortization: amortization };
+    };
+    #calculate = (amount, termInMonths, interestRate, additionalPayment) => {
+      const interestPerMonth = interestRate / 100.0 / 12;
+      const monthlyPayment = roundNumber(
+        amount *
+          (interestPerMonth +
+            interestPerMonth /
+              (Math.pow(1 + interestPerMonth, termInMonths) - 1))
+      );
+
+      const amortizationResult = calculateAmortization(
+        amount,
+        monthlyPayment,
+        termInMonths,
+        interestPerMonth,
+        additionalPayment
+      );
+      const summary = {
+        numberOfPayments: amortizationResult.amortization.length,
+        monthlyPayment: monthlyPayment,
+        interestPerMonth,
+        totalInterest: amortizationResult.totalInterest,
+        totalPrincipal: parseInt(amount),
+        totalPayment: amortizationResult.totalInterest + parseInt(amount),
+      };
+      return { amortization: amortizationResult.amortization, summary };
+    };
+    #calculateWithStart = (
+      amount,
+      termInMonths,
+      interestRate,
+      additionalPayment,
+      startingBalance
+    ) => {
+      const interestPerMonth = interestRate / 100.0 / 12;
+      const monthlyPayment = this.#roundNumber(
+        amount *
+          (interestPerMonth +
+            interestPerMonth /
+              (Math.pow(1 + interestPerMonth, termInMonths) - 1))
+      );
+      const amortization = [];
+      let currentBalance = amount;
+      let prevousBalance = 0;
+      let totalInterest = 0;
+      let totalPayment = 0;
+      let toInterest = 0;
+      let toPrincipal = 0;
+      let currentMonth = 1;
+      let balance = startingBalance;
+      while (startingBalance !== 0) {
+        const difference = currentBalance - startingBalance;
+        toInterest = this.#roundNumber(startingBalance * interestPerMonth);
+        totalInterest = this.#roundNumber(totalInterest + toInterest);
+        toPrincipal = monthlyPayment - toInterest + parseInt(additionalPayment);
+        totalPayment = toPrincipal + toInterest;
+        if (toPrincipal <= difference) {
+          totalInterest = this.#roundNumber(totalInterest - toInterest);
+          currentBalance -= toPrincipal;
+          continue;
+        }
+
+        prevousBalance = startingBalance;
+        startingBalance = this.#roundNumber(startingBalance - toPrincipal);
+        if (startingBalance <= 0) {
+          totalPayment = prevousBalance + toInterest;
+          toPrincipal = prevousBalance;
+          startingBalance = 0;
+        }
+
+        amortization.push({
+          month: currentMonth,
+          principal: toPrincipal,
+          totalPayment,
+          interest: toInterest,
+          totalInterest: totalInterest,
+          balance: startingBalance,
+        });
+        currentMonth++;
+      }
+      const summary = {
+        numberOfPayments: amortization.length,
+        monthlyPayment: monthlyPayment,
+        interestPerMonth,
+        totalInterest,
+        totalPrincipal: parseInt(amount),
+        totalPaymentsSB: totalInterest + parseFloat(balance),
+        totalPaymentsAMT: totalInterest + parseFloat(amount),
+      };
+      return { amortization, summary };
+    };
+    calculateLoanAmortization = () => {
+      return this.#calculateWithStart(
+        this.#amount,
+        this.#termInMonths,
+        this.#interestRate,
+        this.#additionalPayment,
+        this.#startingBalance
+      );
+    };
+  }
+
+  const calculateOnSlider = (
+    used_equity,
+    down_payment,
+    cap,
+    interest,
+    loan_payment_old,
+    loan_balance_old
+  ) => {
+    const added_value = used_equity / down_payment;
+    const added_noi = added_value * cap;
+    const new_balance = added_value - used_equity;
+    const loan_payment_new_investment = new Api(
+      new_balance,
+      360,
+      interest * 100,
+      new_balance
+    ).calculateLoanAmortization().summary.monthlyPayment;
+
+    const loan_payment_new_target = new Api(
+      loan_balance_old + used_equity,
+      360,
+      interest * 100,
+      loan_balance_old + used_equity
+    ).calculateLoanAmortization().summary.monthlyPayment;
+
+    const loan_payment_new_total =
+      loan_payment_new_investment + loan_payment_new_target - loan_payment_old;
+
+    const added_cashflow = added_noi - loan_payment_new_total;
+    return { added_value, added_noi, added_cashflow };
+  };
+</script>
+
+<script>
+  const start = (progress_array) => {
     const id = "#tt0";
     const $elem = $(id);
     const id1 = "#tt1";
@@ -321,17 +523,18 @@
     arr.forEach(({ id, item, text } = el) => {
       item.on("mouseenter", function (e) {
         e.stopImmediatePropagation();
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-        );
+        // $(this).attr(
+        //   "src",
+        //   "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        // );
         close_all_tooptips();
         item.tooltip("open");
       });
 
       item.tooltip({
         items: id,
-        content: `<div class="tooltip-container">${text}<div class="close" /></div>`,
+        // content: `<div class="tooltip-container">${text}<div class="close" /></div>`,
+        content: `<div class="tooltip-container">${text}</div>`,
       });
 
       item.on("click", function (e) {
@@ -340,10 +543,11 @@
 
       item.on("mouseleave", function (e) {
         e.stopImmediatePropagation();
-        $(this).attr(
-          "src",
-          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-        );
+        item.tooltip("close");
+        // $(this).attr(
+        //   "src",
+        //   "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        // );
       });
 
       $(document).mouseup(function (e) {
@@ -363,34 +567,6 @@
       return text.toString().replace(pattern, ",");
     };
 
-    const progress_array = [
-      {
-        CURRENT_SUM: -100000,
-        GOAL_SUM: 1000000,
-        BLUE_SUM: -50000,
-        DESCRIPTION_BAR: "RE Valuation Goal",
-      },
-      {
-        CURRENT_SUM: 100000,
-        GOAL_SUM: 750000,
-        BLUE_SUM: 75000,
-        DESCRIPTION_BAR: "RE Valuation Goal",
-      },
-      {
-        CURRENT_SUM: 7500000,
-        GOAL_SUM: 750000,
-        BLUE_SUM: 100000,
-        DESCRIPTION_BAR: "RE Valuation Goal",
-      },
-      {
-        CURRENT_SUM: -50000,
-        GOAL_SUM: 750000,
-        BLUE_SUM: 100000,
-        DESCRIPTION_BAR: "RE Valuation Goal",
-      },
-    ];
-    // const items = document.getElementsByClassName("bar");
-    // console.log(items);
     progress_array.forEach((progress_bar, index = 0) => {
       const [CURRENT_SUM, GOAL_SUM, BLUE_SUM, DESCRIPTION_BAR] =
         Object.values(progress_bar);
@@ -413,6 +589,8 @@
           const progressBar1 = document.getElementById(
             `ProgressBarBlue${index}`
           );
+          progressBar.style = null;
+          progressBar1.style = null;
           progressBar.title = "$ " + replaceNumber(CURRENT_SUM);
           progressBar1.title = "$ " + replaceNumber(BLUE_SUM);
           progressBar1.style.position = "absolute";
@@ -476,5 +654,50 @@
       };
       move();
     });
-  }
+  };
+  let progress_array = [
+    {
+      CURRENT_SUM: 100000,
+      GOAL_SUM: 1000000,
+      BLUE_SUM: 500000,
+      DESCRIPTION_BAR: "RE Valuation Goal",
+    },
+    {
+      CURRENT_SUM: 400000,
+      GOAL_SUM: 750000,
+      BLUE_SUM: 750000,
+      DESCRIPTION_BAR: "RE Valuation Goal",
+    },
+    {
+      CURRENT_SUM: 7500000,
+      GOAL_SUM: 750000,
+      BLUE_SUM: 100000,
+      DESCRIPTION_BAR: "RE Valuation Goal",
+    },
+    {
+      CURRENT_SUM: -50000,
+      GOAL_SUM: 750000,
+      BLUE_SUM: 100000,
+      DESCRIPTION_BAR: "RE Valuation Goal",
+    },
+  ];
+
+  const button = document.getElementById("click");
+  button.addEventListener("click", () => {
+    const { added_value, added_noi, added_cashflow } = calculateOnSlider(
+      100000,
+      0.35,
+      0.05,
+      0.07,
+      6000,
+      50000
+    );
+
+    progress_array[0].BLUE_SUM = added_value;
+    progress_array[1].BLUE_SUM = added_noi;
+    progress_array[3].BLUE_SUM = added_cashflow;
+
+    start(progress_array);
+  });
+  start(progress_array);
 </script>
