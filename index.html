@@ -98,8 +98,6 @@
       </div>
     </div>
   </div>
-
-  <button id="click">click to change data</button>
 </div>
 
 <style>
@@ -261,7 +259,6 @@
     text-align: center;
     color: white;
     border-radius: 50px;
-    /* background: #0b61a4; */
     border: none;
     line-height: 16px;
     font-size: 10px;
@@ -447,27 +444,33 @@
     cap,
     interest,
     loan_payment_old,
-    loan_balance_old
+    loan_balance_old,
+    target_residence
   ) => {
     const added_value = used_equity / down_payment;
     const added_noi = added_value * cap;
     const new_balance = added_value - used_equity;
-    const loan_payment_new_investment = new Api(
-      new_balance,
-      360,
-      interest * 100,
-      new_balance
-    ).calculateLoanAmortization().summary.monthlyPayment;
+    const loan_payment_new_investment =
+      new Api(
+        new_balance,
+        360,
+        interest * 100,
+        new_balance
+      ).calculateLoanAmortization().summary.monthlyPayment * 12;
 
-    const loan_payment_new_target = new Api(
-      loan_balance_old + used_equity,
-      360,
-      interest * 100,
-      loan_balance_old + used_equity
-    ).calculateLoanAmortization().summary.monthlyPayment;
+    const loan_payment_new_target =
+      new Api(
+        loan_balance_old + used_equity,
+        360,
+        interest * 100,
+        loan_balance_old + used_equity
+      ).calculateLoanAmortization().summary.monthlyPayment * 12;
 
-    const loan_payment_new_total =
-      loan_payment_new_investment + loan_payment_new_target - loan_payment_old;
+    const loan_payment_new_total = target_residence
+      ? loan_payment_new_investment
+      : loan_payment_new_investment +
+        loan_payment_new_target -
+        loan_payment_old;
 
     const added_cashflow = added_noi - loan_payment_new_total;
     return { added_value, added_noi, added_cashflow };
@@ -511,9 +514,11 @@
     $(function () {
       $(".bar").tooltip({
         tooltipClass: "bar-info-tooltip",
+        track: true,
       });
       $(".secondary-bar").tooltip({
         tooltipClass: "bar-info-tooltip",
+        track: true,
       });
     });
 
@@ -523,17 +528,16 @@
     arr.forEach(({ id, item, text } = el) => {
       item.on("mouseenter", function (e) {
         e.stopImmediatePropagation();
-        // $(this).attr(
-        //   "src",
-        //   "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
-        // );
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        );
         close_all_tooptips();
         item.tooltip("open");
       });
 
       item.tooltip({
         items: id,
-        // content: `<div class="tooltip-container">${text}<div class="close" /></div>`,
         content: `<div class="tooltip-container">${text}</div>`,
       });
 
@@ -544,10 +548,10 @@
       item.on("mouseleave", function (e) {
         e.stopImmediatePropagation();
         item.tooltip("close");
-        // $(this).attr(
-        //   "src",
-        //   "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
-        // );
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        );
       });
 
       $(document).mouseup(function (e) {
@@ -571,7 +575,8 @@
       const [CURRENT_SUM, GOAL_SUM, BLUE_SUM, DESCRIPTION_BAR] =
         Object.values(progress_bar);
       const ElCurrentSum = document.getElementById(`curr_sum${index}`);
-      ElCurrentSum.textContent = "$ " + replaceNumber(CURRENT_SUM + BLUE_SUM);
+      ElCurrentSum.textContent =
+        "$ " + replaceNumber(CURRENT_SUM + Math.round(BLUE_SUM));
       const ElGoalSum = document.getElementById(`goal_sum${index}`);
       ElGoalSum.textContent = "$ " + replaceNumber(GOAL_SUM);
       const ElDescriptionBar = document.getElementById(`desc-bar${index}`);
@@ -591,8 +596,8 @@
           );
           progressBar.style = null;
           progressBar1.style = null;
-          progressBar.title = "$ " + replaceNumber(CURRENT_SUM);
-          progressBar1.title = "$ " + replaceNumber(BLUE_SUM);
+          progressBar.title = "$ " + replaceNumber(Math.round(CURRENT_SUM));
+          progressBar1.title = "$ " + replaceNumber(Math.round(BLUE_SUM));
           progressBar1.style.position = "absolute";
           if (BLUE_SUM > 0)
             progressBar1.style.maxWidth = 101 - goalSumPercent + "%";
@@ -627,6 +632,7 @@
           if (BLUE_SUM < 0) {
             progressBar1.style.background = "red";
           }
+
           const id = setInterval(() => {
             if (GOAL_SUM / BLUE_SUM > 9.76) ++width1;
             if (
@@ -646,7 +652,6 @@
                 width1 >= goalSumPercent
               )
                 return;
-              ++width1;
               progressBar1.style.width = ++width1 + "%";
             }
           }, 1);
@@ -657,9 +662,9 @@
   };
   let progress_array = [
     {
-      CURRENT_SUM: 100000,
+      CURRENT_SUM: 400000,
       GOAL_SUM: 1000000,
-      BLUE_SUM: 500000,
+      BLUE_SUM: 600000,
       DESCRIPTION_BAR: "RE Valuation Goal",
     },
     {
@@ -681,23 +686,20 @@
       DESCRIPTION_BAR: "RE Valuation Goal",
     },
   ];
+</script>
+<script>
+  const { added_value, added_noi, added_cashflow } = calculateOnSlider(
+    2000,
+    0.25,
+    0.05,
+    0.1,
+    2518,
+    34965,
+    false
+  );
+  progress_array[0].BLUE_SUM = added_value;
+  progress_array[2].BLUE_SUM = added_noi;
+  progress_array[3].BLUE_SUM = added_cashflow;
 
-  const button = document.getElementById("click");
-  button.addEventListener("click", () => {
-    const { added_value, added_noi, added_cashflow } = calculateOnSlider(
-      100000,
-      0.35,
-      0.05,
-      0.07,
-      6000,
-      50000
-    );
-
-    progress_array[0].BLUE_SUM = added_value;
-    progress_array[1].BLUE_SUM = added_noi;
-    progress_array[3].BLUE_SUM = added_cashflow;
-
-    start(progress_array);
-  });
   start(progress_array);
 </script>
