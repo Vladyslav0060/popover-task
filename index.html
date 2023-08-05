@@ -40,8 +40,8 @@
     beforeDraw: (chart) => {
       if (
         chart.tooltip?._active &&
-        chart.tooltip?._active.length &&
-        chart?.tooltip._active[0].index % 5 === 0
+        chart.tooltip?._active.length
+        // && chart?.tooltip._active[0].index % 5 === 0
       ) {
         const activePoint = chart.tooltip._active[0];
         const activePoint1 = chart.tooltip._active[1];
@@ -101,6 +101,7 @@
     "28 Years",
     "29 Years",
     "30 Years",
+    "31 Years",
   ];
 
   const mockData = [
@@ -115,7 +116,7 @@
             2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224,
             14955, 15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322,
             29698, 31342, 31403, 35652, 37436, 38715, 44582, 44859, 47948,
-            48235, 49069, 51000,
+            48235, 49069, 51000, 52500,
           ],
           pointBorderColor: "#fff",
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
@@ -130,20 +131,6 @@
           pointBorderColor: "#fff",
           pointBackgroundColor: "rgba(252, 223, 152, 1)",
         },
-        {
-          type: "line",
-          label: "$ 10,000  Monthly Cash Flow Goal",
-          data: new Array(31).fill(30000),
-          fill: false,
-          borderColor: "rgba(231, 119, 119, 1)",
-          backgroundColor: "rgba(231, 119, 119, 1)",
-          pointRadius: 0,
-          hoverRadius: 0,
-          borderWidth: 1,
-          pointBorderColor: "#fff",
-          borderWidth: 1,
-          pointHoverRadius: 0,
-        },
       ],
     },
     {
@@ -151,12 +138,12 @@
       datasets: [
         {
           type: "line",
-          label: "Test",
+          label: "Test NOI",
           data: [
             7220, 13401, 15120, 25103, 39379, 39945, 41036, 46679, 47720, 50974,
             51118, 51484, 86347, 88092, 93381, 97911, 100514, 107123, 113985,
             115020, 118484, 119372, 134681, 136214, 137366, 137851, 139330,
-            140153, 142048, 142477, 146630,
+            140153, 142048, 142477, 146630, 151000,
           ],
           fill: false,
           backgroundColor: "rgb(176, 198, 254)",
@@ -165,35 +152,6 @@
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
           pointHoverBackgroundColor:
             "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-        {
-          type: "line",
-          label: "Test 2",
-          data: [
-            2092, 6717, 17819, 19857, 22325, 29531, 36668, 39598, 44950, 48959,
-            52228, 54151, 56531, 61163, 67785, 72656, 76465, 79157, 80113,
-            82613, 83734, 92223, 105564, 106143, 119529, 120922, 121795, 124725,
-            130274, 134046, 141301,
-          ],
-          fill: false,
-          backgroundColor: "rgba(246, 189, 22, 1)",
-          borderColor: "rgba(246, 189, 22, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(252, 223, 152, 1)",
-        },
-        {
-          type: "line",
-          label: "Goal",
-          data: new Array(31).fill(30000),
-          fill: false,
-          borderColor: "rgba(231, 119, 119, 1)",
-          backgroundColor: "rgba(231, 119, 119, 1)",
-          pointRadius: 0,
-          hoverRadius: 0,
-          borderWidth: 1,
-          pointBorderColor: "#fff",
-          borderWidth: 1,
-          pointHoverRadius: 0,
         },
       ],
     },
@@ -207,7 +165,7 @@
             4887, 10772, 10833, 11337, 16868, 28110, 30592, 43626, 49843, 63658,
             64959, 67013, 67949, 82985, 84352, 84533, 90130, 95308, 96022,
             102284, 106758, 110422, 112119, 118320, 119493, 129784, 133783,
-            136780, 143831, 147807, 149369,
+            136780, 143831, 147807, 149369, 150000,
           ],
           fill: false,
           backgroundColor: "rgb(176, 198, 254)",
@@ -216,35 +174,6 @@
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
           pointHoverBackgroundColor:
             "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-        {
-          type: "line",
-          label: "Test 2",
-          data: [
-            2554, 5068, 22045, 26424, 26710, 27049, 28821, 37308, 41353, 44530,
-            46937, 57330, 60320, 62416, 65206, 71235, 74265, 77671, 80367,
-            84786, 85818, 87688, 108678, 114494, 116199, 120183, 123707, 124167,
-            124770, 135641, 140112,
-          ],
-          fill: false,
-          backgroundColor: "rgba(246, 189, 22, 1)",
-          borderColor: "rgba(246, 189, 22, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(252, 223, 152, 1)",
-        },
-        {
-          type: "line",
-          label: "Goal",
-          data: new Array(31).fill(30000),
-          fill: false,
-          borderColor: "rgba(231, 119, 119, 1)",
-          backgroundColor: "rgba(231, 119, 119, 1)",
-          pointRadius: 0,
-          hoverRadius: 0,
-          borderWidth: 1,
-          pointBorderColor: "#fff",
-          borderWidth: 1,
-          pointHoverRadius: 0,
         },
       ],
     },
@@ -258,7 +187,7 @@
             3622, 4401, 11453, 14379, 18150, 18526, 22911, 24079, 24140, 24384,
             28922, 32769, 37038, 39209, 46852, 53712, 57899, 61270, 71802,
             84034, 88652, 90587, 94954, 103740, 103987, 109957, 113051, 125870,
-            126162, 137924, 147372,
+            126162, 137924, 147372, 149369,
           ],
           fill: false,
           backgroundColor: "rgb(176, 198, 254)",
@@ -267,35 +196,6 @@
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
           pointHoverBackgroundColor:
             "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-        {
-          type: "line",
-          label: "Test 2",
-          data: [
-            7098, 9981, 12652, 21588, 26747, 36761, 42634, 44034, 49191, 55100,
-            57442, 66281, 72986, 76198, 77975, 81223, 91046, 96501, 105403,
-            105539, 110836, 112226, 118399, 127063, 128808, 131474, 134553,
-            142353, 145860, 149259, 149843,
-          ],
-          fill: false,
-          backgroundColor: "rgba(246, 189, 22, 1)",
-          borderColor: "rgba(246, 189, 22, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(252, 223, 152, 1)",
-        },
-        {
-          type: "line",
-          label: "Goal",
-          data: new Array(31).fill(30000),
-          fill: false,
-          borderColor: "rgba(231, 119, 119, 1)",
-          backgroundColor: "rgba(231, 119, 119, 1)",
-          pointRadius: 0,
-          hoverRadius: 0,
-          borderWidth: 1,
-          pointBorderColor: "#fff",
-          borderWidth: 1,
-          pointHoverRadius: 0,
         },
       ],
     },
@@ -309,7 +209,7 @@
             2055, 5443, 8376, 9622, 15345, 15478, 18227, 31118, 32017, 34416,
             35945, 36979, 39689, 43801, 50484, 53554, 53567, 68122, 68128,
             73732, 97604, 97813, 104460, 108829, 116874, 117790, 130785, 130796,
-            134143, 135698, 142920,
+            134143, 135698, 142920, 149369,
           ],
           fill: false,
           backgroundColor: "rgb(176, 198, 254)",
@@ -318,35 +218,6 @@
           pointBackgroundColor: "rgba(176, 198, 254, 1)",
           pointHoverBackgroundColor:
             "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-        {
-          type: "line",
-          label: "Test 2",
-          data: [
-            15656, 17894, 20455, 24370, 25663, 28059, 30917, 35531, 43310,
-            45369, 49200, 49781, 59363, 60790, 75287, 85210, 93177, 97914,
-            101064, 102428, 107420, 113076, 119837, 120459, 123299, 126570,
-            127336, 129781, 144127, 144691, 148781,
-          ],
-          fill: false,
-          backgroundColor: "rgba(246, 189, 22, 1)",
-          borderColor: "rgba(246, 189, 22, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(252, 223, 152, 1)",
-        },
-        {
-          type: "line",
-          label: "Goal",
-          data: new Array(31).fill(30000),
-          fill: false,
-          borderColor: "rgba(231, 119, 119, 1)",
-          backgroundColor: "rgba(231, 119, 119, 1)",
-          pointRadius: 0,
-          hoverRadius: 0,
-          borderWidth: 1,
-          pointBorderColor: "#fff",
-          borderWidth: 1,
-          pointHoverRadius: 0,
         },
       ],
     },
@@ -357,11 +228,6 @@
     data: mockData[activeTab],
     options: {
       plugins: {
-        tooltip: {
-          filter: (item) => {
-            return item.dataIndex % 5 === 0 ? true : false;
-          },
-        },
         legend: {
           labels: {
             usePointStyle: true,
@@ -439,7 +305,7 @@
           grid: {
             drawTicks: true,
             drawOnChartArea: false,
-            tickWidth: (ctx) => (ctx.tickWidth = ctx.index % 5 === 0 ? 1 : 0),
+            // tickWidth: (ctx) => (ctx.tickWidth = ctx.index % 5 === 0 ? 1 : 0),
           },
           ticks: {
             maxRotation: 0,
