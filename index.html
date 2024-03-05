@@ -13,435 +13,589 @@
   ></script>
 </head>
 
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap");
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  canvas {
+    margin: 0 auto;
+  }
+  .wrapper-pie {
+    display: flex;
+    justify-content: center;
+    min-width: 320px;
+    max-width: 477px;
+    min-height: 326px;
+    padding: 0;
+  }
+
+  .wrapper-pie > .pie {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 27px 170px 27px;
+    gap: 27px;
+    padding: 0;
+  }
+
+  .pie > h3.pie__title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 27px;
+    text-align: center;
+    grid-column: 1/5;
+    grid-row: 1/1;
+  }
+
+  .pie > .chart-wrapper {
+    width: 170px;
+    height: 170px;
+    grid-column: 1/3;
+    grid-row: 2/2;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pie > .chart-wrapper > .sum-text-center {
+    position: absolute;
+    margin-top: 10px;
+    z-index: -1;
+  }
+
+  .wrapper-pie .pie .toggle-count-value {
+    width: 100%;
+    text-align: center;
+    grid-column: 1/5;
+    grid-row: 3/3;
+  }
+
+  .pie > .chart-wrapper > .donught-chart {
+    height: 170px !important;
+    width: 170px !important;
+  }
+
+  .pie > .legend-container {
+    height: fit-content;
+    width: fit-content;
+    min-width: 200px;
+    z-index: 10;
+    grid-column: 3/5;
+    grid-row: 2/2;
+  }
+
+  .legend-container > ul.legend-list {
+    flex-direction: column;
+    min-width: 202px;
+  }
+
+  .legend-container > ul > li {
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .legend-container > ul li span {
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    width: 20px;
+    border-radius: 3px;
+  }
+
+  .legend-container > ul li p {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    color: #3c3e40;
+    margin-bottom: 10px;
+  }
+
+  [role="tooltip"] {
+    border: 1px solid rgba(11, 97, 164, 1) !important;
+    box-shadow: none;
+    border-radius: 5px;
+    max-width: 400px;
+  }
+
+  [role="tooltip"] .ui-tooltip-content {
+    padding: 15px 15px 15px 15px;
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.025em;
+    color: #3c3e40;
+  }
+
+  [role="tooltip"] .tooltip-container .close {
+    display: flex;
+    width: 16px;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    position: absolute;
+    text-align: center;
+    color: white;
+    border-radius: 50px;
+    border: none;
+    line-height: 16px;
+    font-size: 10px;
+    cursor: pointer;
+    top: 6px;
+    right: 13px;
+    background-image: url("https://s3.amazonaws.com/appforest_uf/f1628768879842x219275027212698660/Close%20Property%20Info.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  ul.legend-list > li > img.tooltip {
+    width: 22px;
+    height: 16px;
+    padding: 0 5px 0 5px;
+  }
+
+  @media all and (max-width: 640px) {
+    .wrapper-pie {
+      justify-content: center;
+      height: 480px;
+    }
+
+    .wrapper-pie .pie {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h3.pie__title {
+      height: 54px;
+    }
+  }
+  .toggle-count-value {
+    cursor: pointer;
+    font-family: Montserrat;
+    font-style: underline;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    letter-spacing: 0.025em;
+    color: #0b61a4;
+    min-width: 70px;
+  }
+  .sum-text-center {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 0.025em;
+    color: #555658;
+  }
+</style>
 <body>
-  <div class="content-wrapper">
-    <div class="tabs">
-      <button class="tab active">Cash Flow</button>
-      <button class="tab">NOI</button>
-      <button class="tab">Dept Paydown</button>
-      <button class="tab"><span>Equity: </span>Real Estate Net Worth</button>
-      <button class="tab">Valuation</button>
-    </div>
-    <div class="content">
-      <h2 class="title">Projected <span id="title_active_tab"></span></h2>
-      <canvas id="newChart"></canvas>
+  <div class="wrapper-pie">
+    <div class="pie">
+      <h3 class="pie__title">Current Annual Return Breakdown</h3>
+      <div class="chart-wrapper">
+        <p class="sum-text-center"></p>
+      </div>
+      <div class="legend-container" id="legend-container"></div>
+      <p class="toggle-count-value">
+        Show Current Annual Return Breakdown in
+        <span class="current-annual-type">Percents</span>
+      </p>
     </div>
   </div>
 </body>
 
 <script>
-  const titleActiveTabElement = document.getElementById("title_active_tab");
-  const tabs = document.getElementsByClassName("tab");
-  const changeActiveTabTitle = (tab_name) =>
-    (titleActiveTabElement.innerHTML = tab_name);
-
-  changeActiveTabTitle(
-    document.getElementsByClassName("tab active")[0].innerHTML
-  );
-  Array.from(tabs).map((tab) =>
-    tab.addEventListener("click", () => changeActiveTabTitle(tab.innerHTML))
-  );
-
-  let goal = 25000;
-  let activeTab = 0;
-
-  const allTabs = document.querySelectorAll(".tabs .tab");
-
-  const tooltipLine = {
-    id: "tooltipLine",
-    beforeDraw: (chart) => {
-      if (
-        chart.tooltip?._active &&
-        chart.tooltip?._active.length
-        // && chart?.tooltip._active[0].index % 5 === 0
-      ) {
-        const activePoint = chart.tooltip._active[0];
-        const activePoint1 = chart.tooltip._active[1];
-        const ctx = chart.ctx;
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([]);
-        ctx.moveTo(activePoint?.element.x, chart.chartArea.top);
-        ctx.lineTo(activePoint?.element.x, chart.chartArea.bottom);
-        ctx.lineWidth = 1;
-        //creating gradient
-        const gradient = chart.ctx.createLinearGradient(
-          0,
-          0,
-          0,
-          chart.chartArea.height
-        );
-        gradient.addColorStop(0.3, "rgba(11, 97, 164, 1)");
-        gradient.addColorStop(0.7, "rgba(101, 162, 207, 1)");
-        gradient.addColorStop(1, "rgba(101, 162, 207, 1)");
-        ctx.strokeStyle = gradient;
-        ctx.stroke();
-        ctx.restore();
-      }
-    },
-  };
-
-  const labels = [
-    "Today",
-    "1 Year",
-    "2 Years",
-    "3 Years",
-    "4 Years",
-    "5 Years",
-    "6 Years",
-    "7 Years",
-    "8 Years",
-    "9 Years",
-    "10 Years",
-    "11 Years",
-    "12 Years",
-    "13 Years",
-    "14 Years",
-    "15 Years",
-    "16 Years",
-    "17 Years",
-    "18 Years",
-    "19 Years",
-    "20 Years",
-    "21 Years",
-    "22 Years",
-    "23 Years",
-    "24 Years",
-    "25 Years",
-    "26 Years",
-    "27 Years",
-    "28 Years",
-    "29 Years",
-    "30 Years",
-    "31 Years",
-  ];
-
-  const mockData = [
-    {
-      labels: labels,
-      datasets: [
-        {
-          label: "Appreciation",
-          backgroundColor: "rgb(176, 198, 254)",
-          borderColor: "rgba(176, 198, 254, 1)",
-          data: [
-            2295, 3950, 4550, 7420, 7845, 10583, 11584, 11787, 12664, 13224,
-            14955, 15942, 17176, 17387, 19788, 22038, 24199, 26605, 28322,
-            29698, 31342, 31403, 35652, 37436, 38715, 44582, 44859, 47948,
-            48235, 49069, 51000, 52500,
-          ],
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(176, 198, 254, 1)",
-          pointHoverBackgroundColor:
-            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-        {
-          label: "Debt Paydown",
-          backgroundColor: "rgba(246, 189, 22, 1)",
-          borderColor: "rgba(246, 189, 22, 1)",
-          data: null,
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(252, 223, 152, 1)",
-        },
-      ],
-    },
-    {
-      labels: labels,
-      datasets: [
-        {
-          type: "line",
-          label: "Test NOI",
-          data: [
-            7220, 13401, 15120, 25103, 39379, 39945, 41036, 46679, 47720, 50974,
-            51118, 51484, 86347, 88092, 93381, 97911, 100514, 107123, 113985,
-            115020, 118484, 119372, 134681, 136214, 137366, 137851, 139330,
-            140153, 142048, 142477, 146630, 151000,
-          ],
-          fill: false,
-          backgroundColor: "rgb(176, 198, 254)",
-          borderColor: "rgba(176, 198, 254, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(176, 198, 254, 1)",
-          pointHoverBackgroundColor:
-            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-      ],
-    },
-    {
-      labels: labels,
-      datasets: [
-        {
-          type: "line",
-          label: "Test",
-          data: [
-            4887, 10772, 10833, 11337, 16868, 28110, 30592, 43626, 49843, 63658,
-            64959, 67013, 67949, 82985, 84352, 84533, 90130, 95308, 96022,
-            102284, 106758, 110422, 112119, 118320, 119493, 129784, 133783,
-            136780, 143831, 147807, 149369, 150000,
-          ],
-          fill: false,
-          backgroundColor: "rgb(176, 198, 254)",
-          borderColor: "rgba(176, 198, 254, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(176, 198, 254, 1)",
-          pointHoverBackgroundColor:
-            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-      ],
-    },
-    {
-      labels: labels,
-      datasets: [
-        {
-          type: "line",
-          label: "Test",
-          data: [
-            3622, 4401, 11453, 14379, 18150, 18526, 22911, 24079, 24140, 24384,
-            28922, 32769, 37038, 39209, 46852, 53712, 57899, 61270, 71802,
-            84034, 88652, 90587, 94954, 103740, 103987, 109957, 113051, 125870,
-            126162, 137924, 147372, 149369,
-          ],
-          fill: false,
-          backgroundColor: "rgb(176, 198, 254)",
-          borderColor: "rgba(176, 198, 254, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(176, 198, 254, 1)",
-          pointHoverBackgroundColor:
-            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-      ],
-    },
-    {
-      labels: labels,
-      datasets: [
-        {
-          type: "line",
-          label: "Test",
-          data: [
-            2055, 5443, 8376, 9622, 15345, 15478, 18227, 31118, 32017, 34416,
-            35945, 36979, 39689, 43801, 50484, 53554, 53567, 68122, 68128,
-            73732, 97604, 97813, 104460, 108829, 116874, 117790, 130785, 130796,
-            134143, 135698, 142920, 149369,
-          ],
-          fill: false,
-          backgroundColor: "rgb(176, 198, 254)",
-          borderColor: "rgba(176, 198, 254, 1)",
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(176, 198, 254, 1)",
-          pointHoverBackgroundColor:
-            "linear-gradient(135deg, #A1BBFF 0%, #C9DBE9 100%);",
-        },
-      ],
-    },
-  ];
-
-  const config = {
-    type: "line",
-    data: mockData[activeTab],
-    options: {
-      plugins: {
-        legend: {
-          display: false,
-          labels: {
-            usePointStyle: true,
-            boxWidth: 8,
-            boxHeight: 8,
-            padding: 24,
-            filter: function (legendItem, data) {
-              let labelData =
-                data.datasets[legendItem.datasetIndex]?.data?.length || null;
-              return !!labelData ? true : false;
-            },
-            font: {
-              size: 14,
-              weight: 500,
-              heigth: 17,
-            },
-          },
-        },
-      },
-      interaction: {
-        intersect: false,
-        includeInvisible: false,
-        mode: "index",
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: {
-          bottom: 30,
-          left: 58,
-          right: 45,
-        },
-      },
-      elements: {
-        line: {
-          tension: 0.4,
-        },
-        point: {
-          display: "none",
-          pointRadius: (ctx) => (ctx.index % 5 === 0 ? 10 : 0),
-          hoverRadius: (ctx) => (ctx.index % 5 === 0 ? 5 : 0),
-          pointHoverRadius: (ctx) => (ctx.index % 5 === 0 ? 14.5 : 0),
-          hoverBorderWidth: 2,
-          hoverBorderColor: "#fff",
-          hitRadius: 45,
-          borderWidth: 3,
-          borderColor: "#fff",
-        },
-      },
-      scales: {
-        yAxes: {
-          position: "right",
-          grid: {
-            lineWidth: 0.5,
-            borderDash: (ctx) => (ctx.borderDash = ctx.index === 0 ? [0] : [7]),
-            drawTicks: false,
-            color: "gray",
-            drawBorder: false,
-          },
-          ticks: {
-            maxTicksLimit: 7,
-            padding: 10,
-            color: "#898A8B",
-            font: {
-              size: 13,
-              heigth: 12,
-              weight: 400,
-            },
-            callback: (value) => {
-              return numeral(value).format("$ 0,0.[00]");
-            },
-          },
-        },
-        xAxes: {
-          grid: {
-            drawTicks: true,
-            drawOnChartArea: false,
-            // tickWidth: (ctx) => (ctx.tickWidth = ctx.index % 5 === 0 ? 1 : 0),
-          },
-          ticks: {
-            maxRotation: 0,
-            autoSkip: false,
-            color: "#898A8B",
-            font: {
-              size: 12,
-              weight: 400,
-            },
-            callback: function (val, index) {
-              return index % 5 === 0 ? this.getLabelForValue(val) : "";
-            },
-          },
-        },
-      },
-    },
-    plugins: [
-      tooltipLine,
+  function initTooltips() {
+    const id1 = "#tt1";
+    const $elem1 = $(id1);
+    const id2 = "#tt2";
+    const $elem2 = $(id2);
+    const id3 = "#tt3";
+    const $elem3 = $(id3);
+    const id4 = "#tt4";
+    const $elem4 = $(id4);
+    const elems = [
       {
-        legend: {
-          labels: {
-            usePointStyle: true,
-            boxWidth: 8,
-            boxHeight: 8,
-            padding: 24,
-            font: {
-              size: 24,
-              weight: 500,
-              heigth: 17,
-            },
+        elem: $elem1,
+        id: id1,
+        content: `appreciation-cur's description`,
+      },
+      {
+        elem: $elem2,
+        id: id2,
+        content: `debt-paydown-cur's description`,
+      },
+      {
+        elem: $elem3,
+        id: id3,
+        content: `cash-flow-cur's description`,
+      },
+      {
+        elem: $elem4,
+        id: id4,
+        content: `depreciation-cur's description`,
+      },
+    ];
+    function closeIfOpened(id) {
+      const rest = elems.filter((item) => item.elem[0].id !== id);
+      rest.forEach((item) => item.elem.tooltip("close"));
+    }
+    elems.forEach((item) => {
+      item.elem.on("mouseenter", function (e) {
+        e.stopImmediatePropagation();
+        elems.forEach((item) => {
+          item.elem.tooltip("close");
+        });
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1628765173777x457896309616959500/Property%20Info.svg"
+        );
+        closeIfOpened(item.elem[0].id);
+        item.elem.tooltip("open");
+      });
+      item.elem.tooltip({
+        items: item.id,
+        position: { my: "left-45% top", at: "left bottom+10" },
+        content: `
+      <div class="tooltip-container">
+        ${item.content}
+      </div>`,
+      });
+      item.elem.on("click", function (e) {
+        item.elem.tooltip("open");
+      });
+      item.elem.on("mouseleave", function (e) {
+        e.stopImmediatePropagation();
+        $(this).attr(
+          "src",
+          "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg"
+        );
+        item.elem.tooltip("close");
+      });
+      $(document).mouseup(function (e) {
+        const container = $(".ui-tooltip");
+        if (
+          !container.is(e.target) &&
+          container.has(e.target).length !== 0 &&
+          e.target.className === "close"
+        ) {
+          item.elem.tooltip("close");
+        }
+      });
+    });
+    return elems;
+  }
+</script>
+<script>
+  var startChartCreation = (id) => {
+    var savedTooltips = [];
+    (function createChartDoughnut(id) {
+      const CHART_COLORS = ["#66A3D2", "#FFC373", "#7272D5", "#7FDBB3"];
+      const CHART_TITLE = [
+        "Appreciation",
+        "Debt Paydown",
+        "Cash Flow",
+        "Depreciation",
+      ];
+      const appreciation = 36000;
+      const debtPaydown = 42000;
+      const cashflow = 24000;
+      const depreciation = 6500;
+      const DATA_COUNT = [appreciation, debtPaydown, cashflow, depreciation];
+      let isCountPercent = false;
+      let TOTAL_COUNT = (
+        appreciation +
+        debtPaydown +
+        cashflow +
+        depreciation
+      ).toFixed();
+      const replaceNumber = (text) => {
+        const pattern = /\B(?=(\d{3})+(?!\d))/g;
+        return text.toString().replace(pattern, ",");
+      };
+      const dataPars = (dataCount) => {
+        const dataPercent = [];
+        dataCount.map((item) => {
+          dataPercent.push(Number(((item * 100) / 980000).toFixed(1)));
+        });
+        return dataPercent;
+      };
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      let SUM_COUNT_PERCENT = dataPars(DATA_COUNT).reduce(reducer).toFixed(1);
+      const sortedPercent = dataPars(DATA_COUNT).sort((a, b) => b - a);
+      const BOT_RANGE = 50;
+      const DISPERSION = 30;
+      const maxVal = sortedPercent[0];
+      const thicknessData = sortedPercent.map((item) => {
+        let value;
+        if (item === maxVal) {
+          value = DISPERSION;
+        } else {
+          value = (item * DISPERSION) / maxVal;
+        }
+        return [BOT_RANGE, BOT_RANGE + value];
+      });
+      const getLegendList = (chart, id) => {
+        let legendContainer = document.getElementById(id);
+        let listContainer = legendContainer?.querySelector("ul");
+        if (!listContainer) {
+          listContainer = document.createElement("ul");
+          listContainer.className = "legend-list";
+          listContainer.style.display = "flex";
+          listContainer.style.margin = 0;
+          listContainer.style.padding = 0;
+          legendContainer.appendChild(listContainer);
+        }
+        return listContainer;
+      };
+      const htmlLegendPlugin = {
+        id: "htmlLegend",
+        afterUpdate(chart, args, options) {
+          const ul = getLegendList(chart, options.containerID);
+          // Remove old legend items
+          while (ul.firstChild) {
+            ul.firstChild.remove();
+          }
+          // Reuse the built-in legendItems generator
+          const items =
+            chart.options.plugins.legend.labels.generateLabels(chart);
+          items.forEach((item, index = 0) => {
+            const toopTip = document.createElement("img");
+            toopTip.className = "tooltip";
+            toopTip.src =
+              "http://s3.amazonaws.com/appforest_uf/f1663766856939x122820179078912510/Icon_I%20%281%29.svg";
+            toopTip.alt = "";
+            toopTip.id = `tt${index + 1}`;
+            const li = document.createElement("li");
+            li.onclick = (e) => {
+              if (
+                chart.config.type !== "doughnut" ||
+                e.target.className === "tooltip"
+              )
+                return;
+              const isVisible = chart.getDataVisibility(item.index);
+              if (isVisible) {
+                SUM_COUNT_PERCENT = (
+                  SUM_COUNT_PERCENT -
+                  ((DATA_COUNT[index] * 100) / 980000).toFixed(1)
+                ).toFixed(1);
+                TOTAL_COUNT -= DATA_COUNT[index];
+              } else {
+                SUM_COUNT_PERCENT =
+                  +SUM_COUNT_PERCENT +
+                  +((DATA_COUNT[index] * 100) / 980000).toFixed(1);
+                TOTAL_COUNT += +DATA_COUNT[index];
+              }
+              chart.toggleDataVisibility(item.index);
+              const sumTextCenter = document.querySelector(".sum-text-center");
+              sumTextCenter.innerText = `${
+                isCountPercent
+                  ? SUM_COUNT_PERCENT + " %"
+                  : "$" + replaceNumber(TOTAL_COUNT)
+              }`;
+              savedTooltips?.forEach((item) => item.elem.tooltip("close"));
+              chart.update();
+              savedTooltips = initTooltips();
+            };
+            // Color box
+            const boxSpan = document.createElement("span");
+            boxSpan.style.background = item.fillStyle;
+            boxSpan.style.borderColor = item.strokeStyle;
+            boxSpan.style.borderWidth = item.lineWidth + "px";
+            // Text
+            const textContainer = document.createElement("p");
+            textContainer.style.color = item.fontColor;
+            textContainer.style.margin = 0;
+            textContainer.style.padding = 0;
+            textContainer.style.textDecoration = item.hidden
+              ? "line-through"
+              : "";
+            const text = document.createTextNode(item.text);
+            textContainer.appendChild(text);
+            const valueContainer = document.createElement("p");
+            valueContainer.style.color = item.fontColor;
+            valueContainer.style.margin = 0;
+            valueContainer.style.padding = 0;
+            valueContainer.style.textDecoration = item.hidden
+              ? "line-through"
+              : "";
+            const value = document.createTextNode(
+              isCountPercent
+                ? `${dataPars(DATA_COUNT)[index]} %`
+                : `$ ${replaceNumber(DATA_COUNT[index])}`
+            );
+            valueContainer.appendChild(value);
+            li.appendChild(boxSpan);
+            li.appendChild(textContainer);
+            li.appendChild(toopTip);
+            li.appendChild(valueContainer);
+            ul.appendChild(li);
+          });
+        },
+      };
+      const thickness = {
+        id: "thickness",
+        beforeDraw: (chart, options) => {
+          let thickness = chart.options.plugins.thickness.thickness;
+          chart.getDatasetMeta(0).data[0].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[0].outerRadius = 82.83;
+          chart.getDatasetMeta(0).data[1].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[1].outerRadius = 77.59;
+          chart.getDatasetMeta(0).data[2].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[2].outerRadius = 72.59;
+          chart.getDatasetMeta(0).data[3].innerRadius = 47.21;
+          chart.getDatasetMeta(0).data[3].outerRadius = 66.1;
+        },
+      };
+      const shadowPlugin = {
+        beforeDraw: (chart, args, options) => {
+          const { ctx } = chart;
+          ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
+          ctx.shadowBlur = 10;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        },
+      };
+      const createLabelTitle = () => {
+        const titleArr = [];
+        if (isCountPercent) {
+          dataPars(DATA_COUNT).map((item, index) => {
+            titleArr.push(`${CHART_TITLE[index]}`);
+          });
+        } else {
+          DATA_COUNT.map((item, index) => {
+            titleArr.push(`${CHART_TITLE[index]}`);
+          });
+        }
+        return titleArr;
+      };
+      const data = {
+        datasets: [
+          {
+            data: dataPars(DATA_COUNT),
+            backgroundColor: CHART_COLORS,
+          },
+        ],
+        labels: createLabelTitle(),
+      };
+      const options = {
+        responsive: false,
+        maintainAspectRatio: false,
+        aspectRatio: 1,
+        rotation: -20,
+        borderRadius: (item) => {
+          let borderRadius = {
+            outerStart: 0,
+            outerEnd: 0,
+            innerStart: 0,
+            innerRight: 0,
+          };
+          if (item.index === 0) {
+            borderRadius.outerStart = 5;
+            borderRadius.outerEnd = 5;
+          }
+          if (item.index !== thicknessData.length - 1)
+            borderRadius.outerEnd = 5;
+          return borderRadius;
+        },
+        borderWidth: 0,
+        tooltip: {
+          bodyColor: "red",
+        },
+        layout: {
+          padding: {
+            top: 10,
+            left: 0,
+            right: 0,
           },
         },
-      },
-    ],
+        plugins: {
+          htmlLegend: {
+            containerID: "legend-container",
+          },
+          legend: {
+            onClick() {},
+            display: false,
+            position: "bottom",
+            align: "start",
+            maxWidth: 150,
+            labels: {
+              boxWidth: 15,
+              boxHeight: 15,
+            },
+          },
+          thickness: {
+            thickness: thicknessData,
+          },
+          legend: {
+            position: "bottom",
+            display: false,
+          },
+          title: {
+            display: false,
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true,
+          },
+        },
+      };
+      const config = {
+        type: "doughnut",
+        data: data,
+        plugins: [thickness, htmlLegendPlugin, shadowPlugin],
+        options: options,
+      };
+      const canvasWrap = document.querySelector(".chart-wrapper");
+      const chart = document.createElement("canvas");
+      canvasWrap.appendChild(chart);
+      const chartId = `chart-${id}`;
+      chart.id = chartId;
+      chart.className = "donught-chart";
+      const ctx = document.getElementById(chartId);
+      const myChartmb = new Chart(ctx, config);
+      const sumTextCenter = document.querySelector(".sum-text-center");
+      sumTextCenter.innerText = `${
+        isCountPercent
+          ? SUM_COUNT_PERCENT + " %"
+          : "$" + replaceNumber(TOTAL_COUNT)
+      }`;
+      const elAnualType = document.querySelector(".current-annual-type");
+      const toggleCountType = document.querySelector(".toggle-count-value");
+      toggleCountType.addEventListener("click", () => {
+        isCountPercent = !isCountPercent;
+        myChartmb.data.labels = createLabelTitle();
+        savedTooltips.forEach((item) => item.elem.tooltip("close"));
+        myChartmb.update();
+        savedTooltips = initTooltips();
+        savedTooltips?.forEach((item) => item.elem.tooltip("close"));
+        elAnualType.innerText = isCountPercent ? "Dollars" : "Percents";
+        const sumTextCenter = document.querySelector(".sum-text-center");
+        sumTextCenter.innerText = `${
+          isCountPercent
+            ? SUM_COUNT_PERCENT + " %"
+            : "$" + replaceNumber(TOTAL_COUNT)
+        }`;
+      });
+    })(id);
+    savedTooltips = initTooltips();
+    savedTooltips?.forEach((item) => item.elem.tooltip("close"));
   };
-
-  let newChart = new Chart(document.getElementById("newChart"), config);
-
-  const setActiveTab = (value) => {
-    allTabs.forEach((tab) => tab.classList.remove("active"));
-    activeTab = value;
-    allTabs[value].classList.add("active");
-    newChart.destroy();
-    newChart.data = mockData[activeTab];
-    newChart = new Chart(document.getElementById("newChart"), config);
-  };
-
-  allTabs.forEach((tab, index = 0) => {
-    tab.addEventListener("click", (event) => setActiveTab(index));
-  });
+  startChartCreation("test");
 </script>
-
-<style>
-  .content-wrapper {
-    display: flex;
-    width: 1071px;
-    height: 396px;
-    gap: 5px;
-  }
-
-  .content-wrapper .tabs {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 190px;
-  }
-
-  .content-wrapper .tabs .tab {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    max-height: 20%;
-    justify-content: center;
-    align-items: center;
-    background: #ffffff;
-    border: 1px solid #0b61a4;
-    position: relative;
-    height: 111px;
-    cursor: pointer;
-  }
-
-  .content-wrapper .tabs .tab::after {
-    content: "";
-    display: none;
-    width: 0;
-    height: 0;
-    border-top: 8px solid transparent;
-    border-right: 10px solid #ffffff;
-    border-bottom: 8px solid transparent;
-    position: absolute;
-    right: -1px;
-    top: 50px;
-  }
-
-  .content-wrapper .tabs .tab.active {
-    background: #0b61a4;
-    color: rgba(255, 255, 255, 1);
-  }
-
-  .content-wrapper .tabs .tab.active::after {
-    display: block;
-    top: auto;
-  }
-
-  .content-wrapper .content {
-    display: flex;
-    flex-direction: column;
-    width: 876px;
-    border: 2px solid #0c60a4;
-    justify-content: flex-end;
-  }
-
-  .content-wrapper .content h2.title {
-    justify-self: center;
-    margin: 0 auto;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 22px;
-    color: #555658;
-  }
-  .content-wrapper .content canvas {
-    align-self: flex-end !important;
-    width: 100% !important;
-    height: 330px !important;
-  }
-</style>
