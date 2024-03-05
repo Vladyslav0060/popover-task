@@ -526,6 +526,19 @@
           },
         },
         plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (tooltipItem, data) {
+                const currentIndex = tooltipItem.dataIndex;
+                const currentValue = isCountPercent
+                  ? dataPars(DATA_COUNT)[currentIndex]
+                  : replaceNumber(DATA_COUNT[currentIndex]);
+                return ` ${tooltipItem.label} ${
+                  isCountPercent ? "" : "$"
+                } ${currentValue} ${isCountPercent ? "%" : ""}`;
+              },
+            },
+          },
           htmlLegend: {
             containerID: "legend-container",
           },
